@@ -22,7 +22,13 @@ module Callme
     end
 
     def self.redis
-      @_redis ||= EM::Hiredis.connect
+      if @_redis.nil?
+        @_redis = EM::Hiredis.connect
+        @_redis.callback do
+          @_redis.del( Session.table_name )
+        end
+      end
+      @_redis
     end
 
     # Initialize the application
