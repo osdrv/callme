@@ -1,5 +1,9 @@
+# encoding: utf-8
+
 require "rubygems"
 require "bundler"
+require 'em-hiredis'
+require 'json'
 
 module Callme
   class Application
@@ -17,6 +21,10 @@ module Callme
       @_routes ||= eval(File.read('./config/routes.rb'))
     end
 
+    def self.redis
+      @_redis ||= EM::Hiredis.connect
+    end
+
     # Initialize the application
     def self.initialize!
       Cramp::Websocket.backend = :thin
@@ -28,4 +36,6 @@ end
 Bundler.require(:default, Callme::Application.env)
 
 # Preload application classes
-Dir['./app/**/*.rb'].each {|f| require f}
+%w(lib app).each do |loc|
+  Dir["./#{loc}/**/*.rb"].each {|f| require f}
+end

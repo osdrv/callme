@@ -16,6 +16,7 @@
       this.options = Object.merge( defaults, options );
       this.SESSID = null;
       this.connection = null;
+      this.user_data = null;
       
       var self = this;
       
@@ -54,8 +55,35 @@
     },
     
     start: function() {
-      this.connection = new WebSocket( this.getConnectionUrl()/*, this.options.protocols*/ );
+      this.connection = new WebSocket( this.getConnectionUrl(), this.options.protocols );
       this.bindConnection();
+    },
+    
+    setUserData: function( data ) {
+      this.user_data = data;
+    },
+    
+    getUserData: function() {
+      return this.user_data;
+    },
+    
+    _finalizeRegister: function() {
+      this.connection.send(
+        JSON.encode( { action: 'session', uuid: this.SESSID, user_data: this.getUserData() } )
+      );
+    },
+    
+    proceed: function( data ) {
+      if ( data !== undefined && data !== null ) {
+        switch ( data.status ) {
+          case 'created':
+            this.SESSID = data.uuid;
+            this.callHandlersFor( 'session.created' );
+            this._finalizeRegister();
+          case 'confirmed':
+            this.callHandlersFor( 'session.confirmed' );
+        }
+      }
     }
   });
 

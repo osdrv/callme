@@ -19,6 +19,10 @@
       user_box.setStatus( 'connecting' );
     } );
     
+    session.registerHandler( 'session.confirmed', function() {
+      user_box.setStatus( 'online' );
+    } );
+    
     session.registerHandler( 'close', function() {
       user_box.setStatus( 'offline' );
       if ( reconnects <= MAX_RECONNECTS ) {
@@ -27,16 +31,30 @@
           session.start();
         }, RECONNECT_TIMEOUT );
       } else {
-        page.addClass( 'blur' );
+        page.removeClass( 'unblur' ).addClass( 'blur' );
         sorry_plate.removeClass( 'hide' ).addClass( 'appear' );
       }
     } );
     
-    session.registerHandler( 'message', function() {
-      
+    session.registerHandler( 'message', function( message ) {
+      reconnects = 0;
+      // try {
+        var data = JSON.decode( message.data );
+        
+        switch ( data.action ) {
+          case 'session':
+            session.proceed( data );
+            break;
+        }
+      // } catch ( e ) {
+      //   console.log( e );
+      //   console.log( 'Inconsistent message received' );
+      // }
+      // console.log(  );
     } );
     
     register_box.registerHandler( 'register', function( values ) {
+      session.setUserData( values );
       register_box.element.removeClass( 'appear' ).addClass( 'right-top' ).addClass( 'hide' );
       window.setTimeout( function() {
         page.removeClass( 'blur' ).addClass( 'unblur' );

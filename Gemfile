@@ -10,4 +10,6 @@ gem 'async-rack'
 
 gem "haml", "~> 3.1.7"
 
-gem "ohm", "~> 1.2.0"
+gem "em-hiredis", "~> 0.1.1"
+
+gem "uuid", "~> 2.3.6"
