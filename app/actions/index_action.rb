@@ -1,15 +1,15 @@
 class IndexAction < Cramp::Action
   
-  on_start :reload_template
-  
-  def reload_template
-    p @_env
-    p "hello!"
+  def app
+    Callme::Application
   end
   
-  @@template = Haml::Engine.new( File.read( Callme::Application.root( 'app/views/index.haml' ) ) )
+  def reload_template
+    @@template = Haml::Engine.new( File.read( app.root( 'app/views/index.haml' ) ) )
+  end
   
   def start
+    reload_template unless app.env == 'production' && @@template.nil?
     render @@template.render
     finish
   end

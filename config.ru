@@ -9,7 +9,7 @@ if Callme::Application.env == 'development'
   use Rack::Reloader, 0
 
   # Serve assets from /public
-  use Rack::Static, :urls => ["/javascripts", "/css", "/favicon.ico"], :root => Callme::Application.root(:public)
+  use Rack::Static, :urls => ["/js", "/css", "/favicon.ico", "/fonts"], :root => Callme::Application.root(:public)
 end
 
 # Running thin :

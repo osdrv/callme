@@ -1,1 +1,179 @@
-body { margin: 0; padding: 0; }
+@font-face {
+    font-family: 'Square Sans Cyrillic Light';
+    src: url('/fonts/SquareSansLight.eot');
+    src: url('/fonts/SquareSansLight.eot?') format('embedded-opentype'),
+    url('/fonts/SquareSansLight.woff') format('woff'),
+    url('/fonts/SquareSansLight.ttf') format('opentype'),
+    url('/fonts/SquareSansLight.svg') format('svg');
+    font-weight: 100;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Square Sans Cyrillic Thin';
+    src: url('/fonts/SquareSansThin.eot');
+    src: url('/fonts/SquareSansThin.eot?') format('embedded-opentype'),
+    url('/fonts/SquareSansThin.woff') format('woff'),
+    url('/fonts/SquareSansThin.ttf') format('opentype'),
+    url('/fonts/SquareSansThin.svg') format('svg');
+    font-weight: 100;
+    font-style: normal;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body, button, input { font-family:"Square Sans Cyrillic Thin", Calibri, 'Trebuchet MS', sans-serif; font-size-adjust:0.495; font-weight:200; font-style:normal; }
+
+::selection {
+	background: #f984e5;
+  color: #FFF;
+}
+::-moz-selection {
+	background: #f984e5;
+  color: #FFF;
+}
+
+.hide {
+  visibility: hidden;
+  opacity: 0;
+  -webkit-transition: opacity 200ms linear, visibility 200ms linear;
+  -moz-transition: opacity 200ms linear, visibility 200ms linear;
+  -o-transition: opacity 200ms linear, visibility 200ms linear;
+  -ms-transition: opacity 200ms linear, visibility 200ms linear;
+  transition: opacity 200ms linear, visibility 200ms linear;
+}
+
+.appear {
+  visibility: visible;
+  opacity: 1;
+  -webkit-transition: opacity 200ms linear, visibility 200ms linear;
+  -moz-transition: opacity 200ms linear, visibility 200ms linear;
+  -o-transition: opacity 200ms linear, visibility 200ms linear;
+  -ms-transition: opacity 200ms linear, visibility 200ms linear;
+  transition: opacity 200ms linear, visibility 200ms linear;
+}
+
+.orange {
+  color: orange;
+}
+
+.red {
+  color: red;
+}
+
+.page .hello {
+  text-align: center;
+  font-size: 18px;
+}
+
+.page .register {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 300px;
+  height: 130px;
+  margin-left: -150px;
+  margin-top: -75px;
+  border: 2px solid lightblue;
+  text-align: center;
+  border-radius: 10px;
+  background-color: #f0fFf0;
+}
+
+.page .register h4 {
+  margin-bottom: 5px;
+}
+
+.page .register input, .page .register button {
+  font-size: 18px;
+}
+
+.page .register input {
+  border: 2px solid grey;
+  border-radius: 2px;
+  outline-style: none;
+  -webkit-transition: border-color 150ms ease-in-out;
+  -moz-transition: border-color 150ms ease-in-out;
+  -o-transition: border-color 150ms ease-in-out;
+  -ms-transition: border-color 150ms ease-in-out;
+  transition: border-color 150ms ease-in-out;
+}
+
+.page .register input:focus {
+  border-color: orange;
+  -webkit-transition: border-color 150ms ease-in-out;
+  -moz-transition: border-color 150ms ease-in-out;
+  -o-transition: border-color 150ms ease-in-out;
+  -ms-transition: border-color 150ms ease-in-out;
+  transition: border-color 150ms ease-in-out;
+}
+
+.page .register input.wrong {
+  border-color: red;
+  background-color: lightpink;
+  -webkit-transition: border-color 150ms ease-in-out;
+  -moz-transition: border-color 150ms ease-in-out;
+  -o-transition: border-color 150ms ease-in-out;
+  -ms-transition: border-color 150ms ease-in-out;
+  transition: border-color 150ms ease-in-out;
+}
+
+.page .user {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 150px;
+}
+
+.page .user .user_status.offline {
+  color: red;
+}
+
+.page .user .user_name {
+  color: lightblue;
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.page .user .user_status.online {
+  color: lightgreen;
+}
+
+.page .user .user_status.unknown {
+  color: lightgrey;
+}
+
+.footer {
+  text-align: center;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.footer a {
+  text-decoration: none;
+}
+
+.ghost a {
+  color: #000;
+  text-decoration: none;
+  text-shadow: none;
+
+  -webkit-transition: text-shadow 250ms ease-in-out;
+  -moz-transition: text-shadow 250ms ease-in-out;
+  -o-transition: text-shadow 250ms ease-in-out;
+  -ms-transition: text-shadow 250ms ease-in-out;
+  transition: text-shadow 250ms ease-in-out;
+}
+
+.ghost a:hover {
+  text-shadow: #0000FF 0 0 20px;
+  -webkit-transition: text-shadow 250ms ease-in-out;
+  -moz-transition: text-shadow 250ms ease-in-out;
+  -o-transition: text-shadow 250ms ease-in-out;
+  -ms-transition: text-shadow 250ms ease-in-out;
+  transition: text-shadow 250ms ease-in-out;
+}
