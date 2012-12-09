@@ -39,6 +39,7 @@
     register_box.registerHandler( 'register', function( values ) {
       register_box.element.removeClass( 'appear' ).addClass( 'right-top' ).addClass( 'hide' );
       window.setTimeout( function() {
+        page.removeClass( 'blur' ).addClass( 'unblur' );
         user_box.setName( values.name );
         session.start();
       }, 2 * interval );
@@ -46,6 +47,7 @@
     
     
     var ix = 1;
+    page.addClass( 'blur' );
     [ 'user', 'register' ].each( function( box_id ) {
       window.setTimeout( function() {
         $( box_id ).removeClass( 'hide' ).addClass( 'appear' );
@@ -56,8 +58,6 @@
         }
       }, interval * ( ++ix ) );
     } );
-    
-
     
   }, false );
 } )( window );

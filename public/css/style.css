@@ -70,7 +70,7 @@ body, button, input { font-family:"Square Sans Cyrillic Thin", Calibri, 'Trebuch
   font-size: 18px;
 }
 
-.page .register {
+.register {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -84,15 +84,15 @@ body, button, input { font-family:"Square Sans Cyrillic Thin", Calibri, 'Trebuch
   background-color: #f0fFf0;
 }
 
-.page .register h4 {
+.register h4 {
   margin-bottom: 5px;
 }
 
-.page .register input, .page .register button {
+.register input, .page .register button {
   font-size: 18px;
 }
 
-.page .register input {
+.register input {
   border: 2px solid grey;
   border-radius: 2px;
   outline-style: none;
@@ -103,7 +103,7 @@ body, button, input { font-family:"Square Sans Cyrillic Thin", Calibri, 'Trebuch
   transition: border-color 150ms ease-in-out;
 }
 
-.page .register input:focus {
+.register input:focus {
   border-color: orange;
   -webkit-transition: border-color 150ms ease-in-out;
   -moz-transition: border-color 150ms ease-in-out;
@@ -112,7 +112,7 @@ body, button, input { font-family:"Square Sans Cyrillic Thin", Calibri, 'Trebuch
   transition: border-color 150ms ease-in-out;
 }
 
-.page .register input.wrong {
+.register input.wrong {
   border-color: red;
   background-color: lightpink;
   -webkit-transition: border-color 150ms ease-in-out;
@@ -195,7 +195,7 @@ body, button, input { font-family:"Square Sans Cyrillic Thin", Calibri, 'Trebuch
   transition: text-shadow 250ms ease-in-out;
 }
 
-.page .right-top {
+.right-top {
   left: 100%;
   top: 0;
   -webkit-transition: all 750ms ease-in-out;
@@ -206,8 +206,18 @@ body, button, input { font-family:"Square Sans Cyrillic Thin", Calibri, 'Trebuch
 }
 
 .page.blur {
-  -webkit-filter: blur(5px);
-  filter: blur(5px);
+  -webkit-filter: blur(2px);
+  filter: blur(3px);
+  -webkit-transition: all 250ms ease-in-out;
+  -moz-transition: all 250ms ease-in-out;
+  -o-transition: all 250ms ease-in-out;
+  -ms-transition: all 250ms ease-in-out;
+  transition: all 250ms ease-in-out;
+}
+
+.page.unblur {
+  -webkit-filter: none;
+  filter: none;
   -webkit-transition: all 250ms ease-in-out;
   -moz-transition: all 250ms ease-in-out;
   -o-transition: all 250ms ease-in-out;

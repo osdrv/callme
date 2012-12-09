@@ -14,12 +14,6 @@
     #hello.hello
       %h1 Call<span class='orange'>Me</span> App
       HTML5 p<span class="red">2</span>p video chat application
-    #register.register.hide
-      %h4 Registration
-      %label Username:
-      %input#register_name{ :type => 'text', :name => 'name', :size => 30, :required => true }
-      %br/
-      %button#register_submit Connect
     #user.user.hide
       .user_name
         %span.name Anonimous
@@ -29,6 +23,14 @@
     #video.video.offline
       %video#self{ :autoplay => true }
       %video#interlocutor{ :autoplay => true }
+
+  #register.register.hide
+    %h4 Registration
+    %label Username:
+    %input#register_name{ :type => 'text', :name => 'name', :size => 30, :required => true }
+    %br/
+    %button#register_submit Connect
+
   #sorry.sorry.hide
     %h2.red Ooops, something is broken (((
     We are very sorry. It seems connection error has fired.
