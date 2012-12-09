@@ -1,0 +1,63 @@
+;( function( W ) {
+  document.addEventListener( 'DOMContentLoaded', function() {
+    
+    var session = new Session({
+          host: 'localhost',
+          port: 8080,
+          url: '/session'
+        }),
+        register_box = new RegisterBox( 'register' ),
+        user_box = new StatusBox( 'user' ),
+        sorry_plate = $( 'sorry' ),
+        page = $( 'page' ),
+        interval = 250,
+        reconnects = 0,
+        MAX_RECONNECTS = 10,
+        RECONNECT_TIMEOUT = 1000;
+    
+    session.registerHandler( 'open', function() {
+      user_box.setStatus( 'connecting' );
+    } );
+    
+    session.registerHandler( 'close', function() {
+      user_box.setStatus( 'offline' );
+      if ( reconnects <= MAX_RECONNECTS ) {
+        window.setTimeout( function() {
+          reconnects++;
+          session.start();
+        }, RECONNECT_TIMEOUT );
+      } else {
+        page.addClass( 'blur' );
+        sorry_plate.removeClass( 'hide' ).addClass( 'appear' );
+      }
+    } );
+    
+    session.registerHandler( 'message', function() {
+      
+    } );
+    
+    register_box.registerHandler( 'register', function( values ) {
+      register_box.element.removeClass( 'appear' ).addClass( 'right-top' ).addClass( 'hide' );
+      window.setTimeout( function() {
+        user_box.setName( values.name );
+        session.start();
+      }, 2 * interval );
+    } );
+    
+    
+    var ix = 1;
+    [ 'user', 'register' ].each( function( box_id ) {
+      window.setTimeout( function() {
+        $( box_id ).removeClass( 'hide' ).addClass( 'appear' );
+        if ( box_id == 'register' ) {
+          window.setTimeout( function() {
+            register_box.focus();
+          }, interval );
+        }
+      }, interval * ( ++ix ) );
+    } );
+    
+
+    
+  }, false );
+} )( window );

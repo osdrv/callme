@@ -9,3 +9,5 @@ gem 'http_router'
 gem 'async-rack'
 
 gem "haml", "~> 3.1.7"
+
+gem "ohm", "~> 1.2.0"

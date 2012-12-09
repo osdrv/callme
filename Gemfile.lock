@@ -15,7 +15,15 @@ GEM
     http_router (0.11.0)
       rack (>= 1.0.0)
       url_mount (~> 0.2.1)
+    nest (1.1.2)
+      redis
+    ohm (1.2.0)
+      nest (~> 1.0)
+      redis
+      scrivener (~> 0.0.3)
     rack (1.3.6)
+    redis (3.0.2)
+    scrivener (0.0.3)
     thin (1.5.0)
       daemons (>= 1.0.9)
       eventmachine (>= 0.12.6)
@@ -32,4 +40,5 @@ DEPENDENCIES
   cramp
   haml (~> 3.1.7)
   http_router
+  ohm (~> 1.2.0)
   thin
