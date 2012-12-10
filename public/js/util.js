@@ -15,4 +15,8 @@
     return v === undefined || v === null;
   }
   
+  navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+  
+  W.URL = W.URL || W.webkitURL;
+  
 } )( window );

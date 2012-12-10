@@ -9,6 +9,7 @@
         register_box = new RegisterBox( 'register' ),
         user_box = new StatusBox( 'user' ),
         contacts_box = new ContactsBox( 'contacts' ),
+        video_box = new VideoBox( { self: 'self', paired: 'paired' } ),
         sorry_plate = $( 'sorry' ),
         page = $( 'page' ),
         interval = 250,

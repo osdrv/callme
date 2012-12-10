@@ -47,6 +47,31 @@ body, button, input { font-family:"Square Sans Cyrillic Thin", Calibri, 'Trebuch
   transition: all 200ms linear;
 }
 
+.video {
+  margin-top: 50px;
+  position: relative;
+  width: 100%;
+}
+
+.video .paired {
+  position: absolute;
+  background-color: lightgrey;
+  border-radius: 10px;
+  z-index: 1;
+  left: 50%;
+  margin-left: -320px;
+}
+
+.video .self {
+  position: absolute;
+  background-color: orange;
+  border-radius: 5px;
+  z-index: 15;
+  left: 50%;
+  margin-top: 350px;
+  margin-left: -400px;
+}
+
 .appear {
   visibility: visible !important;
   opacity: 1 !important;

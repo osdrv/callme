@@ -7,14 +7,14 @@
   %link{ :rel => 'shortcut icon', :href => '/favicon.ico' }
   %link{ :href => '/css/font.css', :rel => 'stylesheet' }
   %link{ :href => '/css/style.css', :rel => 'stylesheet' }
-  - %w(mt object_with_handlers session register_box status_box contacts_box util index).each do |script|
+  - %w(mt object_with_handlers session register_box status_box contacts_box util video_box index).each do |script|
     %script{ :src => "js/#{script}.js", :type => 'text/javascript' }
 
 %body
   #page.page
     #hello.hello
       %h1 Call<span class='orange'>Me</span> App
-      HTML5 p<span class="red">2</span>p video chat application
+      HTML5 p<span class="orange">2</span>p video chat application
     #user.user.hide
       .user_name
         %span.name Anonimous
@@ -27,8 +27,8 @@
         %li Waiting for data…
       
     #video.video.offline
-      %video#self{ :autoplay => true }
-      %video#interlocutor{ :autoplay => true }
+      %video#paired.paired{ :autoplay => true, :width => 640, :height => 480 }
+      %video#self.self{ :autoplay => true, :width => 240, :height => 180 }
 
   #register.register.hide
     %h4 Registration
