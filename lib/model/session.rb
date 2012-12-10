@@ -51,7 +51,7 @@ class Session
       connection.hmget( table_name, *ids ).callback do |data|
         res = []
         data.each_index do |idx|
-          next unless !data[ idx ].empty?
+          next unless !data[ idx ].empty? && data[ idx ] != 'null'
           res.push self.new.tap { |instance|
             instance.uuid = ids[ idx ]
             instance.user_data = JSON.parse( data[ idx ] )
