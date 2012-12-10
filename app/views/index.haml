@@ -7,7 +7,7 @@
   %link{ :rel => 'shortcut icon', :href => '/favicon.ico' }
   %link{ :href => '/css/font.css', :rel => 'stylesheet' }
   %link{ :href => '/css/style.css', :rel => 'stylesheet' }
-  - %w(mt object_with_handlers session register_box status_box index).each do |script|
+  - %w(mt object_with_handlers session register_box status_box contacts_box util index).each do |script|
     %script{ :src => "js/#{script}.js", :type => 'text/javascript' }
 
 %body
@@ -21,6 +21,11 @@
       .user_status.offline
         ●
         %span.text offline
+    #contacts.contacts
+      %h4 Contacts online:
+      %ul
+        %li Waiting for data…
+      
     #video.video.offline
       %video#self{ :autoplay => true }
       %video#interlocutor{ :autoplay => true }

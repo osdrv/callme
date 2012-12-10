@@ -147,6 +147,53 @@ body, button, input { font-family:"Square Sans Cyrillic Thin", Calibri, 'Trebuch
   color: lightgrey;
 }
 
+.contacts {
+  position: absolute;
+  right: 0;
+  top: 200px;
+  width: 150px;
+}
+
+.contacts h4 {
+  margin-bottom: 5px;
+}
+
+.contacts ul {
+  margin-left: 0;
+  padding-left: 0;
+  margin-top: 5px;
+}
+
+.contacts ul li {
+  list-style-type: none;
+}
+
+.contacts ul li.disappear {
+  margin-left: 100%;
+  -webkit-transition: all 250ms ease-out;
+  -moz-transition: all 250ms ease-out;
+  -o-transition: all 250ms ease-out;
+  -ms-transition: all 250ms ease-out;
+  transition: all 250ms ease-out;
+}
+
+.contacts ul li.appear {
+  margin-left: 0;
+  -webkit-transition: all 250ms ease-out;
+  -moz-transition: all 250ms ease-out;
+  -o-transition: all 250ms ease-out;
+  -ms-transition: all 250ms ease-out;
+  transition: all 250ms ease-out;
+}
+
+.contacts ul li.online span {
+  color: lightgreen;
+}
+
+.contacts ul li.offline span {
+  color: red;
+}
+
 .sorry {
   text-align: center;
   padding: 5px;

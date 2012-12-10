@@ -8,6 +8,7 @@
         }),
         register_box = new RegisterBox( 'register' ),
         user_box = new StatusBox( 'user' ),
+        contacts_box = new ContactsBox( 'contacts' ),
         sorry_plate = $( 'sorry' ),
         page = $( 'page' ),
         interval = 250,
@@ -44,6 +45,9 @@
         switch ( data.action ) {
           case 'session':
             session.proceed( data );
+            break;
+          case 'contacts':
+            contacts_box.proceed( data );
             break;
         }
       // } catch ( e ) {
