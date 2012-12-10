@@ -186,8 +186,19 @@ body, button, input { font-family:"Square Sans Cyrillic Thin", Calibri, 'Trebuch
   transition: all 250ms ease-out;
 }
 
+.contacts ul li a {
+  text-decoration: none;
+  font-weight: bold;
+  color: #000;
+}
+
+.contacts ul li a:hover {
+  background-color: orange;
+  color: #FFF;
+}
+
 .contacts ul li.online span {
-  color: lightgreen;
+  color: orange;
 }
 
 .contacts ul li.offline span {
@@ -225,7 +236,6 @@ body, button, input { font-family:"Square Sans Cyrillic Thin", Calibri, 'Trebuch
   color: #000;
   text-decoration: none;
   text-shadow: none;
-
   -webkit-transition: text-shadow 250ms ease-in-out;
   -moz-transition: text-shadow 250ms ease-in-out;
   -o-transition: text-shadow 250ms ease-in-out;
