@@ -96,7 +96,12 @@
     },
     
     answerTo: function( uuid, sess_descr ) {
-      
+      this.connection.send( JSON.encode({
+        action: 'confirm',
+        uuid: this.SESSID,
+        receiver: uuid,
+        session: sess_descr
+      }));
     }
   });
 

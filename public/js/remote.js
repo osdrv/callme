@@ -19,19 +19,13 @@
       this.parent();
       this.session = session;
       this.options = Object.merge( this.defaults, options );
-      //this.createPeerConn();
+      this.peer_connection = null;
     },
     
     createPeerConn: function() {
       var self = this;
       // try {
         this.peer_connection = new RTCPeerConnection( this.options.stun );
-        // this.peer_connection = new webkitPeerConnection00(
-        //   this.options.stun,
-        //   function( peer, others ) {
-        //     self.callHandlersFor( "stun.ice_candidate", peer, others );
-        //   }
-        // );
         console.log( this.peer_connection );
         $w( 'onicecandidate onconnecting onopen onaddstream onremovestream' ).each( function( event ) {
           ( function( event_kind ) {
@@ -53,7 +47,8 @@
     },
     
     answer: function( callee, remote_session ) {
-      this.createPeerConn();
+      if ( this.peer_connection === null )
+        this.createPeerConn();
       this.peer_connection.setRemoteDescription(
         new RTCSessionDescription( remote_session )
       );
@@ -61,16 +56,18 @@
         function ( sess_descr ) {
           sess_descr.sdp = self._preferOpus( sess_descr.sdp );
           self.peer_connection.setLocalDescription( sess_descr );
-          self.session.answerTo( receiver, sess_descr );
+          self.session.answerTo( callee, sess_descr );
         },
         null,
         mediaSettings
       );
+      this.callHandlersFor( 'remote.offered', callee, remote_session );
     },
     
     callTo: function( receiver ) {
       var self = this;
-      this.createPeerConn();
+      if ( this.peer_connection === null )
+        this.createPeerConn();
       this.peer_connection.addStream( this.local_stream );
       var call = this.peer_connection.createOffer(
         function ( sess_descr ) {
@@ -83,12 +80,39 @@
       );
     },
     
+    letsRock: function( callee, remote_session ) {
+      if ( this.peer_connection === null )
+        this.createPeerConn();
+      this.peer_connection.setRemoteDescription( new RTCSessionDescription( remote_session ) );
+      this.callHandlersFor( 'remote.confirmed', callee, remote_session );
+    },
+    
     proceed: function( data ) {
       switch ( data.status ) {
         case 'offer':
-          this.answer( data.session );
+          this.answer( data.callee.uuid, data.session );
+          break;
+        case 'confirm':
+          this.letsRock( data.callee, data.session );
+          break;
+        case 'candidate':
+          this.addCandidate( data.candidate );
+          break;
+        case 'hangup':
+          this.hangup();
           break;
       }
+    },
+    
+    // TODO: implement it
+    hangup: function() {
+      console.log( 'hanged up!' );
+      this.callHandlersFor( 'remote.hanged_up' );
+    },
+    
+    addCandidate: function( data ) {
+      var candidate = new RTCIceCandidate( { sdpMLineIndex: data.label, candidate: data.candidate } );
+      this.peer_connection.addIceCandidate( candidate );
     },
     
     // copypasted from https://apprtc.appspot.com/

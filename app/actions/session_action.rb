@@ -51,6 +51,8 @@ class SessionAction < Cramp::Action
         save_session!( message )
       when 'peer'
         peer_with!( message[ 'receiver' ], message[ 'session' ] )
+      when 'confirm'
+        confirm_to!( message[ 'receiver' ], message[ 'session' ] )
       end
     rescue Exception => e
       p e
@@ -68,6 +70,12 @@ class SessionAction < Cramp::Action
     receiver = @@_connections[ receiver_uuid ]
     return if receiver_uuid.nil? || receiver.nil? || session.nil?
     receiver.response :action => :remote, :status => :offer, :callee => @session.to_json, :session => session
+  end
+  
+  def confirm_to( receiver_uuid, session )
+    receiver = @@_connections[ receiver_uuid ]
+    return if receiver_uuid.nil? || receiver.nil? || session.nil?
+    receiver.response :action => :remote, :status => :confirm, :callee => @session.to_json, :session => session
   end
   
   def response( data )
