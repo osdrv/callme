@@ -6,23 +6,32 @@
     
     initialize: function( videos ) {
       this.parent();
-      console.log( videos )
       this.self_video = $( videos.self );
       this.paired_video = $( videos.paired );
-      this.stream_url = null;
+      this.self_stream = null;
+      this.self_stream_url = null;
       this.initUserMedia();
     },
     
     initUserMedia: function() {
       var self = this;
       navigator.getUserMedia({ video: true, audio: true }, function( stream ) { 
-        self.stream_url = W.URL.createObjectURL( stream );
-        console.log( self.stream_url );
-        self.self_video.src = self.stream_url;
-        self.callHandlersFor( 'inited', self.stream_url );
+        self.self_stream_url = W.URL.createObjectURL( stream );
+        self.self_video.set( 'src', self.self_stream_url );
+        self.self_stream = stream;
+        self.callHandlersFor( 'inited', self.self_stream );
       }, function( error ) {
         self.callHandlersFor( 'error', error );
       });
+    },
+    
+    playPairedVideo: function( src ) {
+      self.paired_video.set( 'src', src );
+      self.paired_video.play();
+    },
+    
+    stopPairedVideo: function() {
+      self.paired_video.stop();
     }
     
   });

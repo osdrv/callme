@@ -84,6 +84,15 @@
             this.callHandlersFor( 'session.confirmed' );
         }
       }
+    },
+    
+    connectWith: function( uuid, sess_descr ) {
+      this.connection.send( JSON.encode({
+        action: 'connect',
+        uuid: this.SESSID,
+        receiver: uuid,
+        session: sess_descr
+      }));
     }
   });
 

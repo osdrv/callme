@@ -21,6 +21,10 @@ module Callme
       @_routes ||= eval(File.read('./config/routes.rb'))
     end
 
+    def self.scripts
+      @_scripts ||= %w(mt object_with_handlers session remote register_box status_box contacts_box util video_box index)
+    end
+
     def self.redis
       if @_redis.nil?
         @_redis = EM::Hiredis.connect

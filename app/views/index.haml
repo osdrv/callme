@@ -7,7 +7,7 @@
   %link{ :rel => 'shortcut icon', :href => '/favicon.ico' }
   %link{ :href => '/css/font.css', :rel => 'stylesheet' }
   %link{ :href => '/css/style.css', :rel => 'stylesheet' }
-  - %w(mt object_with_handlers session register_box status_box contacts_box util video_box index).each do |script|
+  - Callme::Application.scripts.each do |script|
     %script{ :src => "js/#{script}.js", :type => 'text/javascript' }
 
 %body

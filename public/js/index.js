@@ -6,6 +6,7 @@
           port: 8080,
           url: '/session'
         }),
+        remote = new Remote( session, {} ),
         register_box = new RegisterBox( 'register' ),
         user_box = new StatusBox( 'user' ),
         contacts_box = new ContactsBox( 'contacts' ),
@@ -16,6 +17,35 @@
         reconnects = 0,
         MAX_RECONNECTS = 10,
         RECONNECT_TIMEOUT = 1000;
+    
+    
+    
+    remote.registerHandler( 'stun.icecandidate', function( peer, offers ) {
+      console.log( 'stun.ice_candidate', arguments );
+    } );
+    
+    remote.registerHandler( 'stun.addstream', function( event ) {
+      console.log( 'stun.addstream', arguments );
+      video_box.playPairedVideo( URL.createObjectURL( event.stream ) );
+    } );
+    
+    remote.registerHandler( 'stun.removestream', function( event ) {
+      console.log( 'stun.removestream', arguments );
+    } );
+    
+    remote.registerHandler( 'stun.error', function() {
+      console.log( 'stun.error', arguments );
+    } );
+    
+    remote.registerHandler( 'sdp.init', function() {
+      console.log( 'sdp.init', arguments );
+    } );
+    
+    
+    contacts_box.registerHandler( 'contact.selected', function( uuid ) {
+      remote.callTo( uuid );
+    } );
+    
     
     session.registerHandler( 'open', function() {
       user_box.setStatus( 'connecting' );
@@ -57,6 +87,12 @@
       // }
       // console.log(  );
     } );
+    
+    
+    video_box.registerHandler( 'inited', function( stream ) {
+      remote.setStream( stream );
+    } );
+    
     
     register_box.registerHandler( 'register', function( values ) {
       session.setUserData( values );

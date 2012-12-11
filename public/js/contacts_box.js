@@ -10,9 +10,15 @@
     
     initialize: function( element_id, options ) {
       this.parent();
+      var self = this;
       this.options = Object.merge( this.defaults, options );
       this.element = $( element_id );
       this.list = this.element.getElement( 'ul' );
+      this.list.addEvent( 'click:relay(a)', function( e, t ) {
+        e.preventDefault();
+        var uuid = t.get( 'href' ).replace( '#', '' );
+        self.callHandlersFor.call( self, 'contact.selected', uuid );
+      } );
     },
     
     proceed: function( data ) {

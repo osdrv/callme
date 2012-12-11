@@ -15,8 +15,14 @@
     return v === undefined || v === null;
   }
   
+  W.$w = function( str ) {
+    return str.split( /\s+/ );
+  }
+  
   navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
   
   W.URL = W.URL || W.webkitURL;
+  
+  W.RTCPeerConnection = W.RTCPeerConnection || W.webkitRTCPeerConnection;
   
 } )( window );
