@@ -45,6 +45,7 @@ class SessionAction < Cramp::Action
   def message_received( data )
     begin
       message = JSON.parse( data )
+      p message
       case message[ 'action' ]
       when 'session'
         @session.user_data = message[ 'user_data' ]

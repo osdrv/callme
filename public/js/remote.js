@@ -35,7 +35,6 @@
         console.log( this.peer_connection );
         $w( 'onicecandidate onconnecting onopen onaddstream onremovestream' ).each( function( event ) {
           ( function( event_kind ) {
-            console.log( event_kind );
             self.peer_connection[ event_kind ] = function() {
               var args = Array.prototype.slice.call( arguments );
               args.unshift( "stun." + event_kind.replace( /^on/, '' ) );
@@ -59,7 +58,7 @@
       this.peer_connection.addStream( this.local_stream );
       var call = this.peer_connection.createOffer(
         function ( sess_descr ) {
-          sess_descr.sdp = preferOpus( sess_descr.sdp );
+          sess_descr.sdp = self.preferOpus( sess_descr.sdp );
           self.peer_connection.setLocalDescription( sess_descr );
           self.session.connectWith( receiver, sess_descr );
         },
@@ -67,6 +66,8 @@
         mediaSettings
       );
     },
+    
+    // copypasted from https://apprtc.appspot.com/
     
     preferOpus: function( sdp ) {
       var sdpLines = sdp.split( '\r\n' );
@@ -81,29 +82,29 @@
         return sdp;
       // If Opus is available, set it as the default in m line.
       for ( var i = 0; i < sdpLines.length; i++ ) {
-        if ( sdpLines[i].search('opus/48000') !== -1 ) {
-          var opusPayload = this.extractSdp( sdpLines[i], /:(\d+) opus\/48000/i );
+        if ( sdpLines[i].search( 'opus/48000' ) !== -1 ) {
+          var opusPayload = this.extractSdp( sdpLines[ i ], /:(\d+) opus\/48000/i );
           if ( opusPayload ) {
-            sdpLines[ mLineIndex ] = setDefaultCodec( sdpLines[mLineIndex], opusPayload );
+            sdpLines[ mLineIndex ] = this.defaultCodec( sdpLines[ mLineIndex ], opusPayload );
           }
           break;
         }
       }
 
       // Remove CN in m line and sdp.
-      sdpLines = removeCN(sdpLines, mLineIndex);
+      sdpLines = this.removeCN( sdpLines, mLineIndex );
 
-      sdp = sdpLines.join('\r\n');
-      
+      sdp = sdpLines.join( '\r\n' );
+
       return sdp;
     },
     
     extractSdp: function( sdpLine, pattern ) {
       var result = sdpLine.match( pattern );
-      return ( result && result.length == 2 )? result[ 1 ]: null;
+      return ( result && result.length == 2 ) ? result[ 1 ]: null;
     },
     
-    setDefaultCodec: function( mLine, payload ) {
+    defaultCodec: function( mLine, payload ) {
       var elements = mLine.split( ' ' ),
           newLine = new Array(),
           index = 0;
@@ -118,7 +119,7 @@
       return newLine.join( ' ' );
     },
     
-    function removeCN(sdpLines, mLineIndex) {
+    removeCN: function(sdpLines, mLineIndex) {
       var mLineElements = sdpLines[mLineIndex].split(' ');
       // Scan from end for the convenience of removing an item.
       for ( var i = sdpLines.length - 1; i >= 0; i-- ) {

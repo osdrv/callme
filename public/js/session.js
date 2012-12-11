@@ -88,7 +88,7 @@
     
     connectWith: function( uuid, sess_descr ) {
       this.connection.send( JSON.encode({
-        action: 'connect',
+        action: 'peer',
         uuid: this.SESSID,
         receiver: uuid,
         session: sess_descr
