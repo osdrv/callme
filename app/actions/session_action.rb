@@ -53,9 +53,19 @@ class SessionAction < Cramp::Action
         peer_with!( message[ 'receiver' ], message[ 'session' ] )
       when 'confirm'
         confirm_to!( message[ 'receiver' ], message[ 'session' ] )
+      when 'candidate'
+        offer_candidate!( message[ 'candidate' ] )
       end
     rescue Exception => e
       p e
+    end
+  end
+  
+  def offer_candidate!( candidate )
+    @@_connections.keys.reject { |key|
+      key == @session.uuid
+    }.each do |key|
+      @@_connections[ key ].response :action => :remote, :status => :candidate, :callee => @session.to_json, :candidate => candidate
     end
   end
   

@@ -17,16 +17,27 @@
     
     initialize: function( session, options ) {
       this.parent();
+      var self = this;
       this.session = session;
       this.options = Object.merge( this.defaults, options );
       this.peer_connection = null;
+      
+      this.registerHandler( 'stun.icecandidate', function( event ) {
+        if ( event.candidate ) {
+          self.offerCandidate( {
+            type: 'candidate',
+            label: event.candidate.sdpMLineIndex,
+            id: event.candidate.sdpMid,
+            candidate: event.candidate.candidate
+          } );
+        }
+      } );
     },
     
     createPeerConn: function() {
       var self = this;
       // try {
         this.peer_connection = new RTCPeerConnection( this.options.stun );
-        console.log( this.peer_connection );
         $w( 'onicecandidate onconnecting onopen onaddstream onremovestream' ).each( function( event ) {
           ( function( event_kind ) {
             self.peer_connection[ event_kind ] = function() {
@@ -47,6 +58,7 @@
     },
     
     answer: function( callee, remote_session ) {
+      var self = this;
       if ( this.peer_connection === null )
         this.createPeerConn();
       this.peer_connection.setRemoteDescription(
@@ -84,7 +96,12 @@
       if ( this.peer_connection === null )
         this.createPeerConn();
       this.peer_connection.setRemoteDescription( new RTCSessionDescription( remote_session ) );
+      console.log( "remote confirmed!" );
       this.callHandlersFor( 'remote.confirmed', callee, remote_session );
+    },
+    
+    offerCandidate: function( candidate ) {
+      this.session.offerCandidate( candidate );
     },
     
     proceed: function( data ) {

@@ -20,7 +20,7 @@
     
     
     
-    remote.registerHandler( 'stun.icecandidate', function( peer, offers ) {
+    remote.registerHandler( 'stun.icecandidate', function( event ) {
       console.log( 'stun.ice_candidate', arguments );
     } );
     

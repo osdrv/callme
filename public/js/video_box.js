@@ -26,8 +26,8 @@
     },
     
     playPairedVideo: function( src ) {
-      self.paired_video.set( 'src', src );
-      self.paired_video.play();
+      this.paired_video.set( 'src', src );
+      this.paired_video.play();
     },
     
     stopPairedVideo: function() {

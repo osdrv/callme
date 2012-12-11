@@ -102,6 +102,14 @@
         receiver: uuid,
         session: sess_descr
       }));
+    },
+    
+    offerCandidate: function( candidate ) {
+      this.connection.send( JSON.encode({
+        action: 'candidate',
+        uuid: this.SESSID,
+        candidate: candidate
+      }));
     }
   });
 
