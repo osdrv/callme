@@ -52,6 +52,22 @@
       this.callHandlersFor( "stream.add", local_stream );
     },
     
+    answer: function( callee, remote_session ) {
+      this.createPeerConn();
+      this.peer_connection.setRemoteDescription(
+        new RTCSessionDescription( remote_session )
+      );
+      this.peer_connection.createAnswer(
+        function ( sess_descr ) {
+          sess_descr.sdp = self._preferOpus( sess_descr.sdp );
+          self.peer_connection.setLocalDescription( sess_descr );
+          self.session.answerTo( receiver, sess_descr );
+        },
+        null,
+        mediaSettings
+      );
+    },
+    
     callTo: function( receiver ) {
       var self = this;
       this.createPeerConn();
@@ -68,7 +84,11 @@
     },
     
     proceed: function( data ) {
-      console.log( "remote proceed: ", data );
+      switch ( data.status ) {
+        case 'offer':
+          this.answer( data.session );
+          break;
+      }
     },
     
     // copypasted from https://apprtc.appspot.com/

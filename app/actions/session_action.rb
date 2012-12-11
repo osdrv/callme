@@ -67,10 +67,7 @@ class SessionAction < Cramp::Action
   def peer_with!( receiver_uuid, session )
     receiver = @@_connections[ receiver_uuid ]
     return if receiver_uuid.nil? || receiver.nil? || session.nil?
-    Session.find( receiver_uuid ) do |data|
-      return if receiver.nil?
-      receiver.response :action => :remote, :status => :peer, :callee => data.to_json, :session => session
-    end
+    receiver.response :action => :remote, :status => :offer, :callee => @session.to_json, :session => session
   end
   
   def response( data )

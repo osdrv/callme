@@ -93,6 +93,10 @@
         receiver: uuid,
         session: sess_descr
       }));
+    },
+    
+    answerTo: function( uuid, sess_descr ) {
+      
     }
   });
 
