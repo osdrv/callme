@@ -36,7 +36,7 @@ class SessionAction < Cramp::Action
     Session.findAll( @@_connections.keys ) do |items|
       @@_connections.each_pair do |uuid, connection|
         connection.response :action => :contacts, :status => :refresh, :sessions => items.reject { |sess|
-          sess.uuid == uuid
+          sess.uuid == uuid || sess.private?
         }.map(&:to_json)
       end
     end
@@ -48,13 +48,28 @@ class SessionAction < Cramp::Action
       p message
       case message[ 'action' ]
       when 'session'
-        @session.user_data = message[ 'user_data' ]
-        @session.save! do
-          refresh_contact_list
-        end
+        save_session!( message )
+      when 'peer'
+        peer_with!( message[ 'receiver' ], message[ 'session' ] )
       end
     rescue Exception => e
       p e
+    end
+  end
+  
+  def save_session!( message )
+    @session.user_data = message[ 'user_data' ]
+    @session.save! do
+      refresh_contact_list
+    end
+  end
+  
+  def peer_with!( receiver_uuid, session )
+    receiver = @@_connections[ receiver_uuid ]
+    return if receiver_uuid.nil? || receiver.nil? || session.nil?
+    Session.find( receiver_uuid ) do |data|
+      return if receiver.nil?
+      receiver.response :action => :remote, :status => :peer, :callee => data.to_json, :session => session
     end
   end
   

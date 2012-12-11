@@ -3,6 +3,11 @@ class Session
   attr_accessor :uuid
   attr_accessor :user_data
   
+  def initialize( uuid, user_data )
+    self.uuid = uuid
+    self.user_data = user_data
+  end
+  
   def save( &blk )
     begin
       save!( blk )
@@ -24,6 +29,11 @@ class Session
     self.class.connection.hdel( self.class.table_name, uuid )
   end
   
+  # TODO: some private logic
+  def private?
+    false
+  end
+  
   def to_json
     {
       :uuid => uuid,
@@ -42,9 +52,7 @@ class Session
     end
 
     def create
-      self.new.tap do |instance|
-        instance.uuid = UUID.new.generate.to_s
-      end
+      self.new( UUID.new.generate.to_s, nil )
     end
 
     def findAll( ids, &blk )
@@ -52,10 +60,7 @@ class Session
         res = []
         data.each_index do |idx|
           next unless !data[ idx ].empty? && data[ idx ] != 'null'
-          res.push self.new.tap { |instance|
-            instance.uuid = ids[ idx ]
-            instance.user_data = JSON.parse( data[ idx ] )
-          }
+          res.push self.new( ids[ idx ], JSON.parse( data[ idx ] ) )
         end
         
         blk.call( res )
@@ -65,17 +70,10 @@ class Session
 
     def find( uuid, &blk )
       connection.hget( table_name, uuid ).callback do |data|
-        p data
-      end
-    end
-    
-    def all( &blk )
-      connection.hgetall( table_name ).callback do |data|
-        p data
-        blk.call( data )
+        return if data.nil?
+        blk.call( self.new( uuid, data ) )
       end
     end
     
   end
-  
 end

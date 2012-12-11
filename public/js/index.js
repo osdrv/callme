@@ -80,6 +80,9 @@
           case 'contacts':
             contacts_box.proceed( data );
             break;
+          case 'remote':
+            remote.proceed( data );
+            break;
         }
       // } catch ( e ) {
       //   console.log( e );

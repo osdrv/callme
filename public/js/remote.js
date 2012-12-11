@@ -58,7 +58,7 @@
       this.peer_connection.addStream( this.local_stream );
       var call = this.peer_connection.createOffer(
         function ( sess_descr ) {
-          sess_descr.sdp = self.preferOpus( sess_descr.sdp );
+          sess_descr.sdp = self._preferOpus( sess_descr.sdp );
           self.peer_connection.setLocalDescription( sess_descr );
           self.session.connectWith( receiver, sess_descr );
         },
@@ -67,9 +67,13 @@
       );
     },
     
+    proceed: function( data ) {
+      console.log( "remote proceed: ", data );
+    },
+    
     // copypasted from https://apprtc.appspot.com/
     
-    preferOpus: function( sdp ) {
+    _preferOpus: function( sdp ) {
       var sdpLines = sdp.split( '\r\n' );
       // Search for m line.
       for ( var i = 0; i < sdpLines.length; i++ ) {
@@ -83,28 +87,28 @@
       // If Opus is available, set it as the default in m line.
       for ( var i = 0; i < sdpLines.length; i++ ) {
         if ( sdpLines[i].search( 'opus/48000' ) !== -1 ) {
-          var opusPayload = this.extractSdp( sdpLines[ i ], /:(\d+) opus\/48000/i );
+          var opusPayload = this._extractSdp( sdpLines[ i ], /:(\d+) opus\/48000/i );
           if ( opusPayload ) {
-            sdpLines[ mLineIndex ] = this.defaultCodec( sdpLines[ mLineIndex ], opusPayload );
+            sdpLines[ mLineIndex ] = this._defaultCodec( sdpLines[ mLineIndex ], opusPayload );
           }
           break;
         }
       }
 
       // Remove CN in m line and sdp.
-      sdpLines = this.removeCN( sdpLines, mLineIndex );
+      sdpLines = this._removeCN( sdpLines, mLineIndex );
 
       sdp = sdpLines.join( '\r\n' );
 
       return sdp;
     },
     
-    extractSdp: function( sdpLine, pattern ) {
+    _extractSdp: function( sdpLine, pattern ) {
       var result = sdpLine.match( pattern );
       return ( result && result.length == 2 ) ? result[ 1 ]: null;
     },
     
-    defaultCodec: function( mLine, payload ) {
+    _defaultCodec: function( mLine, payload ) {
       var elements = mLine.split( ' ' ),
           newLine = new Array(),
           index = 0;
@@ -119,11 +123,11 @@
       return newLine.join( ' ' );
     },
     
-    removeCN: function(sdpLines, mLineIndex) {
+    _removeCN: function(sdpLines, mLineIndex) {
       var mLineElements = sdpLines[mLineIndex].split(' ');
       // Scan from end for the convenience of removing an item.
       for ( var i = sdpLines.length - 1; i >= 0; i-- ) {
-        var payload = this.extractSdp( sdpLines[i], /a=rtpmap:(\d+) CN\/\d+/i );
+        var payload = this._extractSdp( sdpLines[i], /a=rtpmap:(\d+) CN\/\d+/i );
         if ( payload ) {
           var cnPos = mLineElements.indexOf( payload );
           if ( cnPos !== -1 ) {
