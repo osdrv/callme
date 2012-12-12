@@ -95,6 +95,7 @@
     letsRock: function( callee, remote_session ) {
       if ( this.peer_connection === null )
         this.createPeerConn();
+      console.log( remote_session );
       this.peer_connection.setRemoteDescription( new RTCSessionDescription( remote_session ) );
       console.log( "remote confirmed!" );
       this.callHandlersFor( 'remote.confirmed', callee, remote_session );
@@ -107,9 +108,19 @@
     proceed: function( data ) {
       switch ( data.status ) {
         case 'offer':
-          this.answer( data.callee.uuid, data.session );
+          console.log( "remote received data: ", data );
+          try {
+            var callee = JSON.parse( data.callee );
+            console.log( 'callee: ', callee );
+          } catch ( e ) {
+            console.warn( 'Malformed data received.' );
+            console.warn( e );
+            return;
+          }
+          this.answer( callee.uuid, data.session );
           break;
         case 'confirm':
+          console.log( 'Lets rock!', data );
           this.letsRock( data.callee, data.session );
           break;
         case 'candidate':

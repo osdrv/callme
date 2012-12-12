@@ -1,9 +1,10 @@
 ;( function( W ) {
   document.addEventListener( 'DOMContentLoaded', function() {
     
-    var session = new Session({
-          host: 'localhost',
-          port: 8080,
+    var uri = new URI(),
+        session = new Session({
+          host: uri.get( 'host' ),
+          port: uri.get( 'port' ),
           url: '/session'
         }),
         remote = new Remote( session, {} ),
