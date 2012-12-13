@@ -36,7 +36,7 @@
     
     createPeerConn: function() {
       var self = this;
-      // try {
+      try {
         this.peer_connection = new RTCPeerConnection( this.options.stun );
         $w( 'onicecandidate onconnecting onopen onaddstream onremovestream' ).each( function( event ) {
           ( function( event_kind ) {
@@ -47,33 +47,14 @@
             }
           } )( event );
         } );
-      // } catch ( e ) {
-        // this.callHandlersFor( "stun.error", e );
-      // }
+      } catch ( e ) {
+        this.callHandlersFor( "stun.error", e );
+      }
     },
     
     setStream: function( local_stream ) {
       this.local_stream = local_stream;
       this.callHandlersFor( "stream.add", local_stream );
-    },
-    
-    answer: function( callee, remote_session ) {
-      var self = this;
-      if ( this.peer_connection === null )
-        this.createPeerConn();
-      this.peer_connection.setRemoteDescription(
-        new RTCSessionDescription( remote_session )
-      );
-      this.peer_connection.createAnswer(
-        function ( sess_descr ) {
-          sess_descr.sdp = self._preferOpus( sess_descr.sdp );
-          self.peer_connection.setLocalDescription( sess_descr );
-          self.session.answerTo( callee, sess_descr );
-        },
-        null,
-        mediaSettings
-      );
-      this.callHandlersFor( 'remote.offered', callee, remote_session );
     },
     
     callTo: function( receiver ) {
@@ -92,12 +73,34 @@
       );
     },
     
+    answer: function( callee, remote_session ) {
+      var self = this;
+      if ( this.peer_connection === null )
+        this.createPeerConn();
+      this.peer_connection.addStream( this.local_stream );
+      this.peer_connection.setRemoteDescription(
+        new RTCSessionDescription( remote_session )
+      );
+      this.peer_connection.createAnswer(
+        function ( sess_descr ) {
+          sess_descr.sdp = self._preferOpus( sess_descr.sdp );
+          self.peer_connection.setLocalDescription( sess_descr );
+          self.session.answerTo( callee, sess_descr );
+        },
+        null,
+        mediaSettings
+      );
+      this.callHandlersFor( 'remote.offered', callee, remote_session );
+    },
+    
     letsRock: function( callee, remote_session ) {
       if ( this.peer_connection === null )
         this.createPeerConn();
-      console.log( remote_session );
-      this.peer_connection.setRemoteDescription( new RTCSessionDescription( remote_session ) );
-      console.log( "remote confirmed!" );
+      console.log( callee, remote_session );
+      console.log( this.peer_connection );
+      this.peer_connection.setRemoteDescription(
+        new RTCSessionDescription( remote_session )
+      );
       this.callHandlersFor( 'remote.confirmed', callee, remote_session );
     },
     
@@ -108,20 +111,17 @@
     proceed: function( data ) {
       switch ( data.status ) {
         case 'offer':
-          console.log( "remote received data: ", data );
           try {
             var callee = JSON.parse( data.callee );
-            console.log( 'callee: ', callee );
           } catch ( e ) {
             console.warn( 'Malformed data received.' );
             console.warn( e );
             return;
           }
-          this.answer( callee.uuid, data.session );
+          this.answer( this._getCallee( data.callee ).uuid, data.session );
           break;
         case 'confirm':
-          console.log( 'Lets rock!', data );
-          this.letsRock( data.callee, data.session );
+          this.letsRock( this._getCallee( data.callee ), data.session );
           break;
         case 'candidate':
           this.addCandidate( data.candidate );
@@ -130,6 +130,19 @@
           this.hangup();
           break;
       }
+    },
+    
+    _getCallee: function( data ) {
+      try {
+        var callee = JSON.parse( data );
+      } catch ( e ) {
+        console.error( 'Malformed data received.' );
+        console.error( e );
+        
+        return null;
+      }
+      
+      return callee;
     },
     
     // TODO: implement it

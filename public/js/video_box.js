@@ -1,5 +1,9 @@
 ;( function( W ) {
   
+  var VIDEO_TMPL = '<video src="#{src}" width=#{width} height=#{height} autoplay="true"></video>',
+      SELF_VIDEO_SIZE = { w: 240, h: 180 },
+      PAIRED_VIDEO_SIZE = { w: 640, h: 480 };
+  
   var VideoBox = new Class({
     
     Extends: ObjectWithHandlers,
@@ -17,7 +21,11 @@
       var self = this;
       navigator.getUserMedia({ video: true, audio: true }, function( stream ) { 
         self.self_stream_url = W.URL.createObjectURL( stream );
-        self.self_video.set( 'src', self.self_stream_url );
+        self.self_video.set( 'html', tmpl( VIDEO_TMPL, {
+          width: SELF_VIDEO_SIZE.w,
+          height: SELF_VIDEO_SIZE.h,
+          src: self.self_stream_url
+        } ) );
         self.self_stream = stream;
         self.callHandlersFor( 'inited', self.self_stream );
       }, function( error ) {
@@ -25,15 +33,44 @@
       });
     },
     
+    playSelfVideo: function( src ) {
+      this.stopVideo( this.self_video );
+      this.startVideo( this.self_video, {
+        width: SELF_VIDEO_SIZE.w,
+        height: SELF_VIDEO_SIZE.h,
+        src: src
+      } );
+    },
+    
+    stopSelfVideo: function() {
+      this.stopVideo( this.self_video );
+    },
+    
     playPairedVideo: function( src ) {
-      this.paired_video.set( 'src', src );
-      this.paired_video.play();
+      this.stopVideo( this.paired_video );
+      this.startVideo( this.paired_video, {
+        width: PAIRED_VIDEO_SIZE.w,
+        height: PAIRED_VIDEO_SIZE.h,
+        src: src
+      } );
     },
     
     stopPairedVideo: function() {
-      self.paired_video.stop();
-    }
+      this.stopVideo( this.paired_video );
+    },
     
+    startVideo: function( video, params ) {
+      video.set( 'html', tmpl( VIDEO_TMPL, params ) );
+    },
+    
+    stopVideo: function( video ) {
+      var video_element = video.getElement( 'video' );
+      if ( video_element !== null ) {
+        video_element.stop();
+        video_element.set( 'src', '' );
+      }
+      video.empty();
+    }
   });
   
   W.VideoBox = VideoBox;

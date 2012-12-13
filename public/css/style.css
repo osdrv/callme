@@ -51,6 +51,7 @@ body, button, input { font-family:"Square Sans Cyrillic Thin", Calibri, 'Trebuch
   margin-top: 50px;
   position: relative;
   width: 100%;
+  padding: 2px;
 }
 
 .video .paired {
@@ -60,6 +61,16 @@ body, button, input { font-family:"Square Sans Cyrillic Thin", Calibri, 'Trebuch
   z-index: 1;
   left: 50%;
   margin-left: -320px;
+  width: 652px;
+  height: 492px;
+}
+
+.video video {
+  margin: 4px;
+}
+
+.video .paired video {
+  margin: 6px;
 }
 
 .video .self {
@@ -70,6 +81,8 @@ body, button, input { font-family:"Square Sans Cyrillic Thin", Calibri, 'Trebuch
   left: 50%;
   margin-top: 350px;
   margin-left: -400px;
+  width: 248px;
+  height: 188px;
 }
 
 .appear {

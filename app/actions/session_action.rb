@@ -84,7 +84,6 @@ class SessionAction < Cramp::Action
   
   def confirm_to!( receiver_uuid, session )
     receiver = @@_connections[ receiver_uuid ]
-    p receiver
     return if receiver_uuid.nil? || receiver.nil? || session.nil?
     receiver.response :action => :remote, :status => :confirm, :callee => @session.to_json, :session => session
   end

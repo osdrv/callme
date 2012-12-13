@@ -23,6 +23,6 @@
   
   W.URL = W.URL || W.webkitURL;
   
-  W.RTCPeerConnection = W.RTCPeerConnection || W.webkitRTCPeerConnection;
+  W.RTCPeerConnection = W.mozRTCPeerConnection || W.webkitRTCPeerConnection;
   
 } )( window );

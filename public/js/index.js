@@ -32,6 +32,7 @@
     
     remote.registerHandler( 'stun.removestream', function( event ) {
       console.log( 'stun.removestream', arguments );
+      video_box.stopPairedVideo();
     } );
     
     remote.registerHandler( 'stun.error', function() {
