@@ -41,8 +41,9 @@
       sessions.each( function( session ) {
         // try {
           data = JSON.parse( session );
+          data.user_data.name = data.user_data.name || data.uuid
           if ( !is_empty( data ) && !is_empty( data.uuid ) && !is_empty( data.user_data.name ) ) {
-            self.addContact({ status: 'online', uuid: data.uuid, name: data.user_data.name });
+            self.addContact({ status: 'online', uuid: data.uuid, name: data.user_data.name || data.uuid });
           }
         // } catch ( e ) {
           // console.log( 'ContactsBox.setContactList: Malformed data given' );

@@ -1,0 +1,33 @@
+- # encoding: utf-8
+!!!5
+%head
+  %meta{ :charset => 'utf-8' }
+  %link{ :href => '/css/widget.css', :rel => 'stylesheet' }
+  - Callme::Application.scripts.each do |script|
+    %script{ :src => "js/#{script}.js", :type => 'text/javascript' }
+  
+%body
+  #page.page
+    #hello.hello.faded
+      %h1 Видеосвязь
+    #contacts.contacts
+      %ul
+        %li Ожидание данных...
+    
+    #video.video.offline
+      #paired.paired
+      #self.self
+    
+    #controls.controls
+      %a.hangup.red.faded{ :href => '#', :title => 'Завершить звонок' } ☎
+
+  #sorry.sorry.hide
+    %h2.red Ooops, something is broken (((
+    We are very sorry. It seems connection error has fired.
+    %br/
+    Please try <a href='#' onclick='window.location.reload()'>reload</a> this page a little bit later.
+
+:javascript
+  window.addEventListener( "DOMContentLoaded", function() {
+    WB.App.bang( #{session} );
+  }, false );

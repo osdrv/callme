@@ -70,8 +70,11 @@ class Session
 
     def find( uuid, &blk )
       connection.hget( table_name, uuid ).callback do |data|
-        return if data.nil?
-        blk.call( self.new( uuid, data ) )
+        if data.nil?
+          blk.call nil
+        else
+          blk.call( self.new( uuid, data ) )
+        end
       end
     end
     

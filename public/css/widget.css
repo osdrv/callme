@@ -1,0 +1,119 @@
+body, body * {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+body {
+  background: rgba( 0, 0, 0, 0.5 );
+  font-family: Helvetica;
+  color: #FFF;
+  overflow: hidden;
+}
+
+.hide {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  -webkit-transition: all 200ms linear;
+  -moz-transition: all 200ms linear;
+  -o-transition: all 200ms linear;
+  -ms-transition: all 200ms linear;
+  transition: all 200ms linear;
+}
+
+.appear {
+  visibility: visible !important;
+  opacity: 1 !important;
+  -webkit-transition: opacity 200ms linear, visibility 200ms linear;
+  -moz-transition: opacity 200ms linear, visibility 200ms linear;
+  -o-transition: opacity 200ms linear, visibility 200ms linear;
+  -ms-transition: opacity 200ms linear, visibility 200ms linear;
+  transition: opacity 200ms linear, visibility 200ms linear;
+}
+
+.page.blur {
+  -webkit-filter: blur(2px);
+  filter: blur(3px);
+  -webkit-transition: all 250ms ease-in-out;
+  -moz-transition: all 250ms ease-in-out;
+  -o-transition: all 250ms ease-in-out;
+  -ms-transition: all 250ms ease-in-out;
+  transition: all 250ms ease-in-out;
+}
+
+.page.unblur {
+  -webkit-filter: none;
+  filter: none;
+  -webkit-transition: all 250ms ease-in-out;
+  -moz-transition: all 250ms ease-in-out;
+  -o-transition: all 250ms ease-in-out;
+  -ms-transition: all 250ms ease-in-out;
+  transition: all 250ms ease-in-out;
+}
+
+.faded {
+  background: rgba( 255, 255, 255, 0.2 );
+}
+
+.hello {
+  margin: 3px;
+}
+
+.hello h1 {
+  margin-bottom: 0;
+  font-size: 24px;
+  z-index: 15;
+}
+
+.contacts {
+  margin: 5px;
+}
+
+.footer {
+  height: 30px;
+  position: absolute;
+  bottom: 0;
+  margin: 5px;
+}
+
+.red {
+  color: red;
+}
+
+.controls {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 15;
+}
+
+a.hangup {
+  font-size: 36px;
+  line-height: 38px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  text-decoration: none;
+  color: #FFF;
+  padding: 0;
+}
+
+a.hangup:hover {
+  color: #F00;
+}
+
+video {
+  position: absolute;
+  z-index: 1;
+}
+
+.self video {
+  top: 0;
+  left: -45px;
+}
+
+.contacts a {
+  text-decoration: none;
+  color: #FFF;
+}

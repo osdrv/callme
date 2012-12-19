@@ -1,7 +1,7 @@
 ;( function( W ) {
   
   var VIDEO_TMPL = '<video src="#{src}" width=#{width} height=#{height} autoplay="true"></video>',
-      SELF_VIDEO_SIZE = { w: 240, h: 180 },
+      SELF_VIDEO_SIZE = { w: 320, h: 230 },
       PAIRED_VIDEO_SIZE = { w: 640, h: 480 };
   
   var VideoBox = new Class({
@@ -14,7 +14,6 @@
       this.paired_video = $( videos.paired );
       this.self_stream = null;
       this.self_stream_url = null;
-      this.initUserMedia();
     },
     
     initUserMedia: function() {
