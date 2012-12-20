@@ -5,7 +5,7 @@
     Extends: ObjectWithHandlers,
     
     defaults: {
-      template: "<li class='#{status}'><span>■</span><a title='Make a call' href='##{uuid}'>#{name}</a></li>"
+      template: "<li class='#{status}'><a title='Позвонить' href='##{uuid}'>#{name}</a></li>"
     },
     
     initialize: function( element_id, options ) {

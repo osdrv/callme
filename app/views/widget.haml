@@ -18,14 +18,20 @@
       #paired.paired
       #self.self
     
-    #controls.controls
+    #controls.controls.hide
       %a.hangup.red.faded{ :href => '#', :title => 'Завершить звонок' } ☎
 
   #sorry.sorry.hide
-    %h2.red Ooops, something is broken (((
-    We are very sorry. It seems connection error has fired.
+    %h2.red Ошибка: Связь потеряна.
+    Приносим свои извинения, пропала связь с видеосервером.
     %br/
-    Please try <a href='#' onclick='window.location.reload()'>reload</a> this page a little bit later.
+    Пожалуйста, <a href='#' onclick='window.location.reload()'>обновите</a> эту страницу немного позже.
+  
+  #incomming.incomming.hide
+    %h3.blue Входящий вызов
+    %h1.green.callee
+    %a.answer{ :href => "#" } Принять
+    %a.decline{ :href => "#" } Отклонить
 
 :javascript
   window.addEventListener( "DOMContentLoaded", function() {
