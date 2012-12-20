@@ -15,6 +15,7 @@
           contacts_box = new ContactsBox( 'contacts' ),
           video_box = new VideoBox( { self: 'self', paired: 'paired' } ),
           incomming_box = new IncommingBox( 'incomming' ),
+          control_box = new ControlBox( 'controls' ),
           sorry_plate = $( 'sorry' ),
           page = $( 'page' ),
           interval = 250,
@@ -53,6 +54,12 @@
 
       remote.registerHandler( 'sdp.init', function() {
         console.log( 'sdp.init', arguments );
+      } );
+      
+      remote.addEvent( 'connected', function() {
+        control_box.appear();
+      } ).addEvent( 'hangup', function() {
+        control_box.disappear();
       } );
 
 

@@ -121,7 +121,11 @@ a.hangup:hover {
   height: 90px;
   width: 90px;
   overflow: hidden;
-  left: -15px;
+  left: 0;
+}
+
+.self video {
+  margin-left: -15px;
 }
 
 .contacts a {

@@ -9,6 +9,8 @@
   
   var Remote = new Class({
     
+    Implements: [ Events ],
+    
     Extends: ObjectWithHandlers,
     
     defaults: {
@@ -110,6 +112,7 @@
         new RTCSessionDescription( remote_session )
       );
       this.callHandlersFor( 'remote.confirmed', callee, remote_session );
+      this.fireEvent( 'connected' );
     },
     
     offerCandidates: function() {
@@ -174,6 +177,7 @@
       this.is_inited = false;
       console.log( 'hanged up!' );
       this.callHandlersFor( 'remote.hanged_up' );
+      this.fireEvent( 'hangup' );
     },
     
     addCandidate: function( data ) {
