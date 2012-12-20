@@ -1,6 +1,6 @@
 1. Пользователь авторизуется
-2. Портал делает запрос на http://gov.whitebox.io:8080/register
-3. http://gov.whitebox.io:8080/register отдает новый ssid
+2. Портал делает POST запрос с хеш-параметром user на http://gov.whitebox.io:8080/register. Ожидаемые поля в user: [ name, user_id ]
+3. http://gov.whitebox.io:8080/register плейнтекстом отдает новый ssid
 4. Портал добавляет куку пользователя wb_ssid с этим ssid
 5. При рендеринге страницы в нужном месте вставляется тег:
     <script src='http://gov.whitebox.io:8080/js/widget.js' type='text/javascript'></script>

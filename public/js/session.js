@@ -104,6 +104,14 @@
       }));
     },
     
+    rejectTo: function( uuid ) {
+      this.connection.send( JSON.encode({
+        action: 'reject',
+        uuid: this.SESSID,
+        receiver: uuid
+      }));
+    },
+    
     offerCandidate: function( candidate ) {
       this.connection.send( JSON.encode({
         action: 'candidate',

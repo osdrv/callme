@@ -22,7 +22,7 @@ module Callme
     end
 
     def self.scripts
-      @_scripts ||= %w(mt more object_with_handlers session remote contacts_box util video_box index)
+      @_scripts ||= %w(mt more object_with_handlers session remote incomming_box contacts_box util video_box index)
     end
 
     def self.redis

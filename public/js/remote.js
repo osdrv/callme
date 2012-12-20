@@ -21,7 +21,8 @@
       this.session = session;
       this.options = Object.merge( this.defaults, options );
       this.peer_connection = null;
-      
+      this.candidates = [];
+      this.is_inited = false;
       this.registerHandler( 'stun.icecandidate', function( event ) {
         if ( event.candidate ) {
           self.offerCandidate( {
@@ -75,6 +76,7 @@
     
     answer: function( callee, remote_session ) {
       var self = this;
+      this.is_inited = true;
       if ( this.peer_connection === null )
         this.createPeerConn();
       this.peer_connection.addStream( this.local_stream );
@@ -93,19 +95,36 @@
       this.callHandlersFor( 'remote.offered', callee, remote_session );
     },
     
+    reject: function( callee, remote_session ) {
+      this.is_inited = false;
+      self.session.rejectTo( callee );
+    },
+    
     letsRock: function( callee, remote_session ) {
+      console.log( "let's rock!" );
+      this.is_inited = true;
+      this.offerCandidates();
       if ( this.peer_connection === null )
         this.createPeerConn();
-      console.log( callee, remote_session );
-      console.log( this.peer_connection );
       this.peer_connection.setRemoteDescription(
         new RTCSessionDescription( remote_session )
       );
       this.callHandlersFor( 'remote.confirmed', callee, remote_session );
     },
     
+    offerCandidates: function() {
+      var self = this;
+      while( this.candidates.length ) {
+        candidate = this.candidates.shift();
+        this.session.offerCandidate( candidate );
+      }
+    },
+    
     offerCandidate: function( candidate ) {
-      this.session.offerCandidate( candidate );
+      this.candidates.push( candidate );
+      if ( this.is_inited ) {
+        this.offerCandidates();
+      }
     },
     
     proceed: function( data ) {
@@ -114,14 +133,19 @@
           try {
             var callee = JSON.parse( data.callee );
           } catch ( e ) {
-            console.warn( 'Malformed data received.' );
-            console.warn( e );
+            console.error( 'Malformed data received.' );
+            console.error( e );
             return;
           }
           this.answer( this._getCallee( data.callee ).uuid, data.session );
           break;
         case 'confirm':
           this.letsRock( this._getCallee( data.callee ), data.session );
+          break;
+        case 'reject':
+          // FIX ME
+          // this.reject( this._getCallee( data.callee ) );
+          // END OF FIX ME
           break;
         case 'candidate':
           this.addCandidate( data.candidate );
@@ -147,6 +171,7 @@
     
     // TODO: implement it
     hangup: function() {
+      this.is_inited = false;
       console.log( 'hanged up!' );
       this.callHandlersFor( 'remote.hanged_up' );
     },

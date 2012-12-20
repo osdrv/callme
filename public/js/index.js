@@ -14,22 +14,31 @@
           remote = new Remote( session, {} ),
           contacts_box = new ContactsBox( 'contacts' ),
           video_box = new VideoBox( { self: 'self', paired: 'paired' } ),
+          incomming_box = new IncommingBox( 'incomming' ),
           sorry_plate = $( 'sorry' ),
           page = $( 'page' ),
           interval = 250,
           reconnects = 0,
-          deffer = null,
           MAX_RECONNECTS = 10,
           RECONNECT_TIMEOUT = 1000;
 
 
+      var blurPage = function() {
+        page.removeClass( 'unblur' ).addClass( 'blur' );
+      }
+
+      var unblurPage = function() {
+        page.removeClass( 'blur' ).addClass( 'unblur' );
+      }
+
 
       remote.registerHandler( 'stun.icecandidate', function( event ) {
-        console.log( 'stun.ice_candidate', arguments );
+        // console.log( 'stun.ice_candidate', arguments );
       } );
 
       remote.registerHandler( 'stun.addstream', function( event ) {
         console.log( 'stun.addstream', arguments );
+        remote.offerCandidates();
         video_box.playPairedVideo( URL.createObjectURL( event.stream ) );
       } );
 
@@ -47,11 +56,17 @@
       } );
 
 
+      incomming_box.addEvent( 'appear', function() {
+        blurPage();
+      } ).addEvent( 'disappear', function() {
+        unblurPage();
+      } );
+
       contacts_box.registerHandler( 'contact.selected', function( uuid ) {
-        deffer = function() {
+        video_box.initUserMedia( function( stream ) {
+          remote.setStream( stream );
           remote.callTo( uuid );
-        }
-        video_box.initUserMedia();
+        } );
       } );
 
 
@@ -71,7 +86,7 @@
             session.start();
           }, RECONNECT_TIMEOUT );
         } else {
-          page.removeClass( 'unblur' ).addClass( 'blur' );
+          blurPage();
           sorry_plate.removeClass( 'hide' ).addClass( 'appear' );
         }
       } );
@@ -90,12 +105,21 @@
               break;
             case 'remote':
               if ( data.status == "offer" ) {
-                deffer = function() {
-                  remote.proceed( data );
-                }
-                video_box.initUserMedia();
+                incomming_box.proceed( data.callee, function() {
+                  video_box.initUserMedia( function( stream ) {
+                    incomming_box.disappear();
+                    remote.setStream( stream );
+                    remote.proceed( data );
+                  });
+                }, function() {
+                  incomming_box.disappear();
+                  // FIX ME
+                  // remote.reject( data );
+                  // END OF FIX ME
+                } );
+              } else {
+                remote.proceed( data );
               }
-              remote.proceed( data );
               break;
           }
         // } catch ( e ) {
@@ -106,12 +130,6 @@
       } );
 
 
-      video_box.registerHandler( 'inited', function( stream ) {
-        remote.setStream( stream );
-        deffer();
-      } );
-
-      
       session.setUserData( sess_data );
       session.start();
       

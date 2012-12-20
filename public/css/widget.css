@@ -107,14 +107,21 @@ a.hangup:hover {
   color: #F00;
 }
 
-video {
+.paired, .self {
   position: absolute;
-  z-index: 1;
 }
 
-.self video {
+.paired {
   top: 0;
   left: -45px;
+}
+
+.self {
+  bottom: 0;
+  height: 90px;
+  width: 90px;
+  overflow: hidden;
+  left: -15px;
 }
 
 .contacts a {
@@ -170,7 +177,7 @@ video {
 }
 
 .incomming .callee {
-  margin: 70px 0;
+  margin: 10px 0;
 }
 
 .sorry {
@@ -182,6 +189,6 @@ video {
   background-color: lightgreen;
 }
 
-.incomming a.decline {
+.incomming a.reject {
   background-color: lightpink;
 }

@@ -1,8 +1,8 @@
 ;( function( W ) {
   
   var VIDEO_TMPL = '<video src="#{src}" width=#{width} height=#{height} autoplay="true"></video>',
-      SELF_VIDEO_SIZE = { w: 320, h: 230 },
-      PAIRED_VIDEO_SIZE = { w: 640, h: 480 };
+      SELF_VIDEO_SIZE = { w: 120, h: 90 },
+      PAIRED_VIDEO_SIZE = { w: 320, h: 230 };
   
   var VideoBox = new Class({
     
@@ -16,7 +16,7 @@
       this.self_stream_url = null;
     },
     
-    initUserMedia: function() {
+    initUserMedia: function( cb ) {
       var self = this;
       navigator.getUserMedia({ video: true, audio: true }, function( stream ) { 
         self.self_stream_url = W.URL.createObjectURL( stream );
@@ -27,6 +27,7 @@
         } ) );
         self.self_stream = stream;
         self.callHandlersFor( 'inited', self.self_stream );
+        cb( self.self_stream );
       }, function( error ) {
         self.callHandlersFor( 'error', error );
       });
