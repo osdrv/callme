@@ -32,6 +32,7 @@
     },
     
     receive: function( data ) {
+      console.log( data )
       var method_name = data.action;
       // if ( this.router.respondTo( method_name ) ) {
         this.router[ method_name ]( data );

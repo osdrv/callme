@@ -18,11 +18,19 @@ class Session
     yield if block_given?
   end
   
-  def to_json
+  def delete
+    ( @@_pool ||= Hash.new ).delete uuid.to_sym
+  end
+  
+  def to_h
     {
       :uuid => uuid,
       :user_data => user_data
-    }.to_json
+    }
+  end
+  
+  def to_json
+    to_h.to_json
   end
   
   def self.table_name
@@ -34,7 +42,7 @@ class Session
   end
     
   def self.find( uuid, &blk )
-    res = ( @@_pool ||= Hash.new )[ uuid.to_sym ]
+    res = uuid.nil? ? nil : ( @@_pool ||= Hash.new )[ uuid.to_sym ]
     blk.call( res ) if block_given?
     res
   end

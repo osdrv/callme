@@ -6,10 +6,9 @@
   
   var VideoBox = new Class({
     
-    Extends: ObjectWithHandlers,
+    Implements: [ Events ],
     
     initialize: function( videos ) {
-      this.parent();
       this.self_video = $( videos.self );
       this.paired_video = $( videos.paired );
       this.self_stream = null;
@@ -26,10 +25,10 @@
           src: self.self_stream_url
         } ) );
         self.self_stream = stream;
-        self.callHandlersFor( 'inited', self.self_stream );
+        self.fireEvent( 'video.inited', self.self_stream );
         cb( self.self_stream );
       }, function( error ) {
-        self.callHandlersFor( 'error', error );
+        self.fireEvent( 'video.error', error );
       });
     },
     

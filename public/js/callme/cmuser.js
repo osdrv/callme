@@ -8,6 +8,15 @@
       this.session = null;
       this.transport = null;
       this.stream = null;
+      this.is_local = true;
+    },
+    
+    local: function( v ) {
+      if ( v === undefined ) {
+        return this.is_local;
+      } else {
+        this.is_local = v;
+      }
     },
     
     setSession: function( session ) {
@@ -23,26 +32,36 @@
       this._bindTransportEvents();
     },
     
-    incomming: function( client ) {
-      this.fireEvent( 'incomming', client );
+    call: function( user ) {
+      this.transport.send(
+        this.session,
+        user.getSession(),
+        {
+          action: 'remote.invite'
+        }
+      );
     },
     
-    answer: function( client ) {
-      this.transport.answerTo( this.getSession(), client.getSession() );
-      this.fireEvent( 'answered', client );
+    incomming: function( user ) {
+      this.fireEvent( 'incomming', user );
     },
     
-    reject: function( client ) {
-      this.transport.rejectTo( this.getSession(), client.getSession() );
-      this.fireEvent( 'rejected', client );
+    answer: function( user ) {
+      this.transport.answerTo( this.getSession(), user.getSession() );
+      this.fireEvent( 'answered', user );
     },
     
-    hangup: function() {
-      this.fireEvent( 'hanged_up', client );
+    reject: function( user ) {
+      this.transport.rejectTo( this.getSession(), user.getSession() );
+      this.fireEvent( 'rejected', user );
     },
     
-    cancel: function() {
-      this.fireEvent( 'canceled', client );
+    hangup: function( user ) {
+      this.fireEvent( 'hanged_up', user );
+    },
+    
+    cancel: function( user ) {
+      this.fireEvent( 'canceled', user );
     },
     
     confirm: function() {

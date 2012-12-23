@@ -25,7 +25,9 @@ module Callme
     end
     
     def self.widget_scripts
-      @_widget_scripts ||= %w(mt more callme util) + %w(cmrouter cmsession cmtransport cmuser).map{ |scr| "callme/#{scr}" }
+      @_widget_scripts ||= %w(mt more callme util) +
+                           %w(cmrouter cmsession cmtransport cmuser helpers).map{ |scr| "callme/#{scr}" } +
+                           %w(incomming_box contacts_box control_box video_box)
     end
 
     # Initialize the application

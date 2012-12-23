@@ -2,22 +2,21 @@
   
   var ContactsBox = new Class({
     
-    Extends: ObjectWithHandlers,
+    Implements: [Events, Options],
     
-    defaults: {
+    options: {
       template: "<li class='#{status}'><a title='Позвонить' href='##{uuid}'>#{name}</a></li>"
     },
     
     initialize: function( element_id, options ) {
-      this.parent();
       var self = this;
-      this.options = Object.merge( this.defaults, options );
+      this.setOptions( options );
       this.element = $( element_id );
       this.list = this.element.getElement( 'ul' );
       this.list.addEvent( 'click:relay(a)', function( e, t ) {
         e.preventDefault();
         var uuid = t.get( 'href' ).replace( '#', '' );
-        self.callHandlersFor.call( self, 'contact.selected', uuid );
+        self.fireEvent( 'contact.selected', self.users[ uuid ] );
       } );
     },
     
@@ -36,26 +35,24 @@
       this.list.empty();
     },
     
-    setContactList: function( sessions ) {
+    setContactList: function( users ) {
       var self = this;
-      sessions.each( function( session ) {
-        // try {
-          data = JSON.parse( session );
-          data.user_data.name = data.user_data.name || data.uuid
-          if ( !is_empty( data ) && !is_empty( data.uuid ) && !is_empty( data.user_data.name ) ) {
-            self.addContact({ status: 'online', uuid: data.uuid, name: data.user_data.name || data.uuid });
-          }
-        // } catch ( e ) {
-          // console.log( 'ContactsBox.setContactList: Malformed data given' );
-        // }
-      } )
+      this.list.empty();
+      this.users = users;
+      Object.each( users, function( user ) {
+        var user_data = user.session.data(),
+            user_name,
+            user_uuid = user.session.getSSID();
+        if ( is_empty( user_uuid ) ) return;
+        user_name = is_empty( user_data ) ? user_uuid : user_data[ 'name' ];
+        self.addContact( { status: 'online', uuid: user_uuid, name: user_name } );
+      } );
     },
     
     addContact: function( contact ) {
       var li = tmpl( this.options.template, contact );
       this.list.set( 'html', this.list.get( 'html' ) + li );
     }
-    
     
   });
   

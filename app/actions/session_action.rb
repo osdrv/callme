@@ -10,28 +10,23 @@ class SessionAction < Cramp::Action
   on_finish :close_session
   on_data :message_received
   
-  def create_session( uuid )
-    Session.find( uuid ) do |session|
-      if session.nil?
-        response :action => :session, :status => :rejected, :uuid => uuid
-      else
-        @@_connections[ session.uuid ] = self
-        response :action => :session, :status => :confirmed, :uuid => session.uuid, :user_data => session.user_data
-      end
-    end
+  def close_session
+    @@_connections.delete( @session.uuid.to_sym ) rescue nil
+    @session.delete
+    refresh_contact_list
+    @_hooks = nil
   end
   
-  def close_session
-    @@_connections.delete( @session.uuid ) rescue nil
-    @session = null
-    refresh_contact_list
+  def binded_session
+    @session
   end
   
   def refresh_contact_list
     @@_connections.each_pair do |uuid, connection|
-      connection.response :action => 'contacts.refresh', :sessions => items.reject { |sess|
-        sess.uuid == uuid || sess.private?
-      }.map(&:to_json)
+      connection.response :action => 'contacts.refresh',
+                          :sessions => @@_connections.values.map( &:binded_session ).reject { |sess|
+        sess.nil? || sess.uuid.to_sym == uuid || sess.private?
+      }.map(&:to_h)
     end
   end
   
@@ -41,7 +36,8 @@ class SessionAction < Cramp::Action
       ssid = message[ 'sender' ]
       Session.find( ssid ) do |session|
         if !session.nil?
-          @@_connections[ session.uuid ] = self
+          @session = session
+          @@_connections[ session.uuid.to_sym ] = self
           response :action => 'session.confirmed', :receiver => ssid, :user_data => session.user_data
         else
           response :action => 'session.rejected', :receiver => ssid
@@ -65,63 +61,26 @@ class SessionAction < Cramp::Action
   end
   
   def proxy_to( connection, data )
-    connection.response data
+    data[ 'action' ] = data[ 'data' ].delete( 'action' )
+    data[ 'data' ][ 'sender' ] = Session.find( data[ 'receiver' ] ).to_h
+    connection.response( data ) if !connection.nil?
   end
   
   def message_received( data )
-    # begin
-      message = JSON.parse( data )
-      p message
-      
-      if !message[ 'data' ].nil?
-        call_hooks( message[ 'data' ][ 'action' ], message )
-      end
-      
-      if !message[ 'receiver' ].nil?
-        proxy_to( @@_connections[ message[ 'receiver' ].to_sym ], message )
-      else
-        
-      end
-        
-      # case message[ 'action' ]
-      # when 'session'
-      #   save_session!( message )
-      # when 'peer'
-      #   peer_with!( message[ 'receiver' ], message[ 'session' ] )
-      # when 'confirm'
-      #   confirm_to!( message[ 'receiver' ], message[ 'session' ] )
-      # when 'candidate'
-      #   offer_candidate!( message[ 'candidate' ] )
-      # end
-    # rescue Exception => e
-    #   p e
-    # end
-  end
-  
-  def offer_candidate!( candidate )
-    @@_connections.keys.reject { |key|
-      key == @session.uuid
-    }.each do |key|
-      @@_connections[ key ].response :action => :remote, :status => :candidate, :callee => @session.to_json, :candidate => candidate
+    message = JSON.parse( data )
+    p message
+    
+    if !message[ 'data' ].nil?
+      call_hooks( message[ 'data' ][ 'action' ], message )
     end
-  end
-  
-  def save_session!( message )
-    @session.save! do
-      refresh_contact_list
+    
+    if !message[ 'receiver' ].nil?
+      p message[ 'receiver' ].to_sym
+      p @@_connections.keys
+      proxy_to( @@_connections[ message[ 'receiver' ].to_sym ], message )
+    else
+      
     end
-  end
-  
-  def peer_with!( receiver_uuid, session )
-    receiver = @@_connections[ receiver_uuid ]
-    return if receiver_uuid.nil? || receiver.nil? || session.nil?
-    receiver.response :action => :remote, :status => :offer, :callee => @session.to_json, :session => session
-  end
-  
-  def confirm_to!( receiver_uuid, session )
-    receiver = @@_connections[ receiver_uuid ]
-    return if receiver_uuid.nil? || receiver.nil? || session.nil?
-    receiver.response :action => :remote, :status => :confirm, :callee => @session.to_json, :session => session
   end
   
   def response( data )

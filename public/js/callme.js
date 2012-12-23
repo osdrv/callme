@@ -11,11 +11,16 @@
             port: uri.get( 'port' ),
             url: '/session'
           }),
+          contacts_box = new ContactsBox( 'contacts' ),
+          video_box = new VideoBox( { self: 'self', paired: 'paired' } ),
+          incomming_box = new IncommingBox( 'incomming' ),
+          control_box = new ControlBox( 'controls' ),
+          sorry_plate = $( 'sorry' ),
           session = new CMSession( sessid ),
           user = new CMUser();
+      
       user.setSession( session );
       user.setTransport( transport );
-      
       
       router.on( 'session.confirmed', function( message ) {
         session.data( message.user_data );
@@ -27,7 +32,9 @@
       } );
       
       router.on( 'contacts.refresh', function( message ) {
-        console.log( message )
+        var users_online = CallMe.getUsersOnline( message );
+        Object.each( users_online, function( user ) { user.setTransport( transport ) } );
+        contacts_box.setContactList( users_online );
       } );
       
       router.on( 'remote.invite', function( message ) {
@@ -40,6 +47,12 @@
         
       } ).on( 'remote.stun.candidate', function() {
         
+      } );
+      
+      contacts_box.addEvent( 'contact.selected', function( remote_user ) {
+        user.askForVideo( function( stream ) {
+          user.call( remote_user );
+        } )
       } );
       
       // создаем соединение с сервером
