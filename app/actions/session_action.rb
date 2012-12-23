@@ -6,59 +6,96 @@ class SessionAction < Cramp::Action
   
   self.transport = :websocket
   
-  on_start :create_redis, :create_session
+  on_start :register_hooks
   on_finish :close_session
   on_data :message_received
   
-  def create_redis
-    Callme::Application.redis
-  end
-  
-  def close_redis
-    Callme::Application.redis.close_connection
-  end
-  
-  def create_session
-    @session = Session.create
-    @session.save! do
-      @@_connections[ @session.uuid ] = self
-      response :action => :session, :status => :created, :uuid => @session.uuid
+  def create_session( uuid )
+    Session.find( uuid ) do |session|
+      if session.nil?
+        response :action => :session, :status => :rejected, :uuid => uuid
+      else
+        @@_connections[ session.uuid ] = self
+        response :action => :session, :status => :confirmed, :uuid => session.uuid, :user_data => session.user_data
+      end
     end
   end
   
   def close_session
-    @@_connections.delete( @session.uuid )
-    @session.destroy!
+    @@_connections.delete( @session.uuid ) rescue nil
+    @session = null
     refresh_contact_list
   end
   
   def refresh_contact_list
-    Session.findAll( @@_connections.keys ) do |items|
-      @@_connections.each_pair do |uuid, connection|
-        connection.response :action => :contacts, :status => :refresh, :sessions => items.reject { |sess|
-          sess.uuid == uuid || sess.private?
-        }.map(&:to_json)
-      end
+    @@_connections.each_pair do |uuid, connection|
+      connection.response :action => 'contacts.refresh', :sessions => items.reject { |sess|
+        sess.uuid == uuid || sess.private?
+      }.map(&:to_json)
     end
   end
   
+  def register_hooks
+    
+    register_hook 'session.confirm' do |message|
+      ssid = message[ 'sender' ]
+      Session.find( ssid ) do |session|
+        if !session.nil?
+          @@_connections[ session.uuid ] = self
+          response :action => 'session.confirmed', :receiver => ssid, :user_data => session.user_data
+        else
+          response :action => 'session.rejected', :receiver => ssid
+        end
+      end
+    end
+    
+    register_hook 'contacts.refresh' do
+      refresh_contact_list
+    end
+  end
+  
+  def register_hook( signature, &blk )
+    ( ( @_hooks ||= Hash.new )[ signature.to_sym ] ||= [] ).push( blk )
+  end
+  
+  def call_hooks( signature, data )
+    ( ( @_hooks ||= Hash.new )[ signature.to_sym ] ||= [] ).each do |handler|
+      handler.call( data )
+    end
+  end
+  
+  def proxy_to( connection, data )
+    connection.response data
+  end
+  
   def message_received( data )
-    begin
+    # begin
       message = JSON.parse( data )
       p message
-      case message[ 'action' ]
-      when 'session'
-        save_session!( message )
-      when 'peer'
-        peer_with!( message[ 'receiver' ], message[ 'session' ] )
-      when 'confirm'
-        confirm_to!( message[ 'receiver' ], message[ 'session' ] )
-      when 'candidate'
-        offer_candidate!( message[ 'candidate' ] )
+      
+      if !message[ 'data' ].nil?
+        call_hooks( message[ 'data' ][ 'action' ], message )
       end
-    rescue Exception => e
-      p e
-    end
+      
+      if !message[ 'receiver' ].nil?
+        proxy_to( @@_connections[ message[ 'receiver' ].to_sym ], message )
+      else
+        
+      end
+        
+      # case message[ 'action' ]
+      # when 'session'
+      #   save_session!( message )
+      # when 'peer'
+      #   peer_with!( message[ 'receiver' ], message[ 'session' ] )
+      # when 'confirm'
+      #   confirm_to!( message[ 'receiver' ], message[ 'session' ] )
+      # when 'candidate'
+      #   offer_candidate!( message[ 'candidate' ] )
+      # end
+    # rescue Exception => e
+    #   p e
+    # end
   end
   
   def offer_candidate!( candidate )
@@ -70,7 +107,6 @@ class SessionAction < Cramp::Action
   end
   
   def save_session!( message )
-    @session.user_data = message[ 'user_data' ]
     @session.save! do
       refresh_contact_list
     end

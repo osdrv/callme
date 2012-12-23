@@ -2,7 +2,6 @@
 
 require "rubygems"
 require "bundler"
-require 'em-hiredis'
 require 'json'
 
 module Callme
@@ -24,15 +23,9 @@ module Callme
     def self.scripts
       @_scripts ||= %w(mt more object_with_handlers session remote incomming_box contacts_box control_box util video_box index)
     end
-
-    def self.redis
-      if @_redis.nil?
-        @_redis = EM::Hiredis.connect
-        @_redis.callback do
-          @_redis.del( Session.table_name )
-        end
-      end
-      @_redis
+    
+    def self.widget_scripts
+      @_widget_scripts ||= %w(mt more callme util) + %w(cmrouter cmsession cmtransport cmuser).map{ |scr| "callme/#{scr}" }
     end
 
     # Initialize the application

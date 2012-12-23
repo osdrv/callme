@@ -13,10 +13,10 @@ class WidgetAction < Cramp::Action
   def start
     ssid = params[ :s ] || ""
     Session.find( ssid ) do |session|
-      @session = session || Session.create
-      @session.save! do
+      session = session || Session.create
+      session.save do
         reload_template unless app.env == 'production' && @@template.nil?
-        render @@template.render( Object.new, :session => @session.to_json )
+        render @@template.render( Object.new, :session => session.to_json )
         finish
       end
     end

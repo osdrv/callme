@@ -3,7 +3,7 @@
 %head
   %meta{ :charset => 'utf-8' }
   %link{ :href => '/css/widget.css', :rel => 'stylesheet' }
-  - Callme::Application.scripts.each do |script|
+  - Callme::Application.widget_scripts.each do |script|
     %script{ :src => "js/#{script}.js", :type => 'text/javascript' }
   
 %body
@@ -35,5 +35,5 @@
 
 :javascript
   window.addEventListener( "DOMContentLoaded", function() {
-    WB.App.bang( #{session} );
+    CallMe.bang( #{session} );
   }, false );

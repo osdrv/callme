@@ -15,7 +15,7 @@
     return v === undefined || v === null;
   }
   
-  W.$w = function( str ) {
+  W.$w = W._w = function( str ) {
     return str.split( /\s+/ );
   }
   
@@ -24,5 +24,19 @@
   W.URL = W.URL || W.webkitURL;
   
   W.RTCPeerConnection = W.mozRTCPeerConnection || W.webkitRTCPeerConnection;
+  
+  W.argsToArr = function( args ) {
+    return Array.prototype.slice.call( args );
+  };
+  
+  W.pJSON = function( str ) {
+    try {
+      var res = JSON.decode( str );
+      return res;
+    } catch ( e ) {
+      console.error( e.message );
+      return null;
+    }
+  };
   
 } )( window );
