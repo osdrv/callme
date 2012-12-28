@@ -32,14 +32,13 @@
       this._bindTransportEvents();
     },
     
+    getTransport: function() {
+      return this.transport;
+    },
+    
     call: function( user ) {
-      this.transport.send(
-        this.session,
-        user.getSession(),
-        {
-          action: 'remote.invite'
-        }
-      );
+      var call = new CMCall( this );
+      call.init( user );
     },
     
     incomming: function( user ) {
@@ -57,10 +56,12 @@
     },
     
     hangup: function( user ) {
+      this.stream = null;
       this.fireEvent( 'hanged_up', user );
     },
     
     cancel: function( user ) {
+      this.stream = null;
       this.fireEvent( 'canceled', user );
     },
     
@@ -74,14 +75,22 @@
     
     askForVideo: function( cb ) {
       var self = this;
-      navigator.getUserMedia( { video: true, audio: true }, function( stream ) {
-        self.stream = stream;
-        self.stream_url = W.URL.createObjectURL( stream );
-        self.fireEvent( 'media.allowed', stream );
-        cb( stream );
-      }, function( error ) {
-        self.fireEvent( 'media.rejected', error );
-      } );
+      if ( !is_empty( this.stream ) ) {
+        cb( this.stream );
+      } else {
+        navigator.getUserMedia( { video: true, audio: true }, function( stream ) {
+          self.stream = stream;
+          self.stream_url = W.URL.createObjectURL( stream );
+          self.fireEvent( 'media.allowed', stream );
+          cb( stream );
+        }, function( error ) {
+          self.fireEvent( 'media.rejected', error );
+        } );
+      }
+    },
+    
+    getStream: function( cb ) {
+      this.askForVideo( cb );
     },
     
     loadContactList: function() {

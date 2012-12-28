@@ -38,7 +38,7 @@
       } );
       
       router.on( 'remote.invite', function( message ) {
-        
+        console.log( message )
       } ).on( 'remote.ack', function( message ) {
         
       } ).on( 'remote.bye', function( message ) {

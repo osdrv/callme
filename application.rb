@@ -26,7 +26,7 @@ module Callme
     
     def self.widget_scripts
       @_widget_scripts ||= %w(mt more callme util) +
-                           %w(cmrouter cmsession cmtransport cmuser helpers).map{ |scr| "callme/#{scr}" } +
+                           %w(cmrouter cmsession cmtransport cmuser cmcall helpers).map{ |scr| "callme/#{scr}" } +
                            %w(incomming_box contacts_box control_box video_box)
     end
 
