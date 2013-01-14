@@ -22,6 +22,10 @@
     
     connect: function( callback, errback ) {
       this._createTransport();
+    },
+    
+    _createTransport: function() {
+      this.transport = new this.options.transport;
     }
     
   });
