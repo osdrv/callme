@@ -5,7 +5,7 @@
   CM.Session = new Class({
     
     options: {
-      transport: CM.Transport.WebSocket
+      transport: CM.Transport.WebSocketTransport
     },
     
     Implements: [ Events, Options ],
