@@ -51,4 +51,26 @@ describe( "CM.Util.extras", function() {
     
   } );
   
+  describe( "CM.is_func", function() {
+    
+    it( "Should be defined", function() {
+      expect( CM.is_func ).toBeDefined();
+    } );
+    
+    it( "Should return true if arg is anonimous function", function() {
+      expect( CM.is_func( function() {} ) ).toBeTruthy();
+    } );
+    
+    it( "Should return true if arg is predefined function", function() {
+      var f1 = function() {};
+      expect( CM.is_func( f1 ) ).toBeTruthy();
+    } );
+    
+    it( "Should return false othewise", function() {
+      var f1 = function() {};
+      expect( CM.is_func( "" + f1 ) ).toBeFalsy();
+    } );
+    
+  } );
+  
 } );

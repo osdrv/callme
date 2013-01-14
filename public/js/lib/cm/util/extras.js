@@ -16,4 +16,8 @@
     console.warn( "MooTools Events module is not defied." )
   }
   
+  CM.is_func = function( arg ) {
+    return typeof( arg ) == 'function';
+  }
+  
 } )( window );
