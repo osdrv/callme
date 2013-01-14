@@ -51,54 +51,54 @@ describe( "CM.Util.extras", function() {
     
   } );
   
-  describe( "is_func", function() {
+  describe( "isFunc", function() {
     
     it( "Should be defined", function() {
-      expect( CM.is_func ).toBeDefined();
+      expect( CM.isFunc ).toBeDefined();
     } );
     
     it( "Should return true if arg is anonimous function", function() {
-      expect( CM.is_func( function() {} ) ).toBeTruthy();
+      expect( CM.isFunc( function() {} ) ).toBeTruthy();
     } );
     
     it( "Should return true if arg is predefined function", function() {
       var f1 = function() {};
-      expect( CM.is_func( f1 ) ).toBeTruthy();
+      expect( CM.isFunc( f1 ) ).toBeTruthy();
     } );
     
     it( "Should return false othewise", function() {
       var args = [ null, undefined, "", [], {}, 1, 1.0, false, new RegExp(''), new Array(), new Object() ];
       for ( var i = 0, l = args.length; i < l; i++ ) {
-        expect( CM.is_func( args[ i ] ) ).toBeFalsy();
+        expect( CM.isFunc( args[ i ] ) ).toBeFalsy();
       }
     } );
     
   } );
   
-  describe( "is_empty", function() {
+  describe( "isEmpty", function() {
     
     it( "Should be defined", function() {
-      expect( CM.is_empty ).toBeDefined();
+      expect( CM.isEmpty ).toBeDefined();
     } );
     
     it( "Should return true for 0", function() {
-      expect( CM.is_empty( 0 ) ).toBeTruthy();
+      expect( CM.isEmpty( 0 ) ).toBeTruthy();
     } );
     
     it( "Should return true for 0.0", function() {
-      expect( CM.is_empty( 0.0 ) ).toBeTruthy();
+      expect( CM.isEmpty( 0.0 ) ).toBeTruthy();
     } );
     
     it( "Should return true for null", function() {
-      expect( CM.is_empty( null ) ).toBeTruthy();
+      expect( CM.isEmpty( null ) ).toBeTruthy();
     } );
     
     it( "Should return true for undefined", function() {
-      expect( CM.is_empty( undefined ) ).toBeTruthy();
+      expect( CM.isEmpty( undefined ) ).toBeTruthy();
     } );
     
     it( "Should return true for ''", function() {
-      expect( CM.is_empty( '' ) ).toBeTruthy();
+      expect( CM.isEmpty( '' ) ).toBeTruthy();
     } );
     
   } );

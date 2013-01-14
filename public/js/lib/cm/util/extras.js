@@ -16,11 +16,11 @@
     console.warn( "MooTools Events module is not defied." )
   }
   
-  CM.is_func = function( arg ) {
+  CM.isFunc = function( arg ) {
     return typeof( arg ) == 'function';
   }
   
-  CM.is_empty = function( arg ) {
+  CM.isEmpty = function( arg ) {
     return arg === undefined || !arg
   }
   

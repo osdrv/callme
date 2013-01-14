@@ -32,5 +32,12 @@ describe( "CM.User", function() {
     it( "Should be defined", function() {
       expect( user.createSession ).toBeDefined();
     } );
+    
+    it( "Should create session instance", function() {
+      expect( user.getSession() ).toBeNull();
+      expect( function() {
+        user.createSession( "Test session ID" );
+      } ).not.toThrow();
+    } );
   } );
 } );
