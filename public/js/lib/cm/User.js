@@ -23,7 +23,10 @@
     destroySession: function( callback ) {
       var self = this;
       this.session.destroy( function() {
-        
+        self.session = null;
+        if ( CM.is_func( callback ) ) {
+          callback.call( self );
+        }
       } );
     }
     

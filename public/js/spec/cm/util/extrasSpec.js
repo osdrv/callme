@@ -67,8 +67,10 @@ describe( "CM.Util.extras", function() {
     } );
     
     it( "Should return false othewise", function() {
-      var f1 = function() {};
-      expect( CM.is_func( "" + f1 ) ).toBeFalsy();
+      var args = [ null, undefined, "", [], {}, 1, 1.0, false, new RegExp(''), new Array(), new Object() ];
+      for ( var i = 0, l = args.length; i < l; i++ ) {
+        expect( CM.is_func( args[ i ] ) ).toBeFalsy();
+      }
     } );
     
   } );
