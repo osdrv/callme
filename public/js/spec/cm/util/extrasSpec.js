@@ -51,7 +51,7 @@ describe( "CM.Util.extras", function() {
     
   } );
   
-  describe( "CM.is_func", function() {
+  describe( "is_func", function() {
     
     it( "Should be defined", function() {
       expect( CM.is_func ).toBeDefined();
@@ -71,6 +71,34 @@ describe( "CM.Util.extras", function() {
       for ( var i = 0, l = args.length; i < l; i++ ) {
         expect( CM.is_func( args[ i ] ) ).toBeFalsy();
       }
+    } );
+    
+  } );
+  
+  describe( "is_empty", function() {
+    
+    it( "Should be defined", function() {
+      expect( CM.is_empty ).toBeDefined();
+    } );
+    
+    it( "Should return true for 0", function() {
+      expect( CM.is_empty( 0 ) ).toBeTruthy();
+    } );
+    
+    it( "Should return true for 0.0", function() {
+      expect( CM.is_empty( 0.0 ) ).toBeTruthy();
+    } );
+    
+    it( "Should return true for null", function() {
+      expect( CM.is_empty( null ) ).toBeTruthy();
+    } );
+    
+    it( "Should return true for undefined", function() {
+      expect( CM.is_empty( undefined ) ).toBeTruthy();
+    } );
+    
+    it( "Should return true for ''", function() {
+      expect( CM.is_empty( '' ) ).toBeTruthy();
     } );
     
   } );

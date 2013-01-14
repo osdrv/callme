@@ -27,4 +27,10 @@ describe( "CM.User", function() {
       expect( user.getSession ).toBeDefined();
     } );
   } );
+  
+  describe( "createSession", function() {
+    it( "Should be defined", function() {
+      expect( user.createSession ).toBeDefined();
+    } );
+  } );
 } );

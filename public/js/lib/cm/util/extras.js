@@ -20,4 +20,8 @@
     return typeof( arg ) == 'function';
   }
   
+  CM.is_empty = function( arg ) {
+    return arg === undefined || !arg
+  }
+  
 } )( window );
