@@ -8,7 +8,8 @@ describe( "CM.Transport.WebSocketTransport", function() {
     \"fieldString\": \"hello world!\", \
     \"fieldArray\": [1,2,3,4,5], \
     \"fieldObject\": {\"a\": \"b\", \"c\": \"d\"} \
-  }}";
+  }}",
+  TEST_OBJ = { a: 'b', c: 'd' };
 
   var transportOptions = {
     host: 'testhost',
@@ -234,6 +235,48 @@ describe( "CM.Transport.WebSocketTransport", function() {
         expect( parsed_message.object.fieldObject.c ).toBeDefined();
         expect( parsed_message.object.fieldObject.c ).toBe( 'd' );
       } );
+    } );
+
+  } );
+
+  describe( 'send', function() {
+
+    it( "Should be defined", function() {
+      expect( transport.send ).toBeDefined();
+    } );
+
+    it( "Should throw exceion if not connected yet", function() {
+      expect( function() {
+        transport.send( TEST_OBJ );
+      } ).toThrow();
+    } );
+
+    it( "Should call socket.send", function() {
+      var message = TEST_OBJ,
+          flag = false;
+      var socket = {
+        send: function( msg ) {
+          flag = true;
+        }
+      }
+      transport.socket = socket;
+      transport.is_connected = true;
+      transport.send( message );
+      expect( flag ).toBeTruthy();
+    } );
+
+    it( "Shoould encode message as JSON", function() {
+      var message = TEST_OBJ,
+          sendMessage;
+      var socket = {
+        send: function( msg ) {
+          sendMessage = msg;
+        }
+      }
+      transport.socket = socket;
+      transport.is_connected = true;
+      transport.send( message );
+      expect( sendMessage ).toBe( JSON.encode( message ) );
     } );
 
   } );

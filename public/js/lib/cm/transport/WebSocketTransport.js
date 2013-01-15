@@ -96,6 +96,14 @@
       } catch( e ) {
         this.bang( 'connection.message.error', e );
       }
+    },
+
+    send: function( object ) {
+      if ( this.isConnected() ) {
+        this.socket.send( JSON.encode( object ) );
+      } else {
+        throw "Socket is not connected yet.";
+      }
     }
 
   });
