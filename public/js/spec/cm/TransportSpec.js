@@ -22,6 +22,18 @@ describe( "CM.Transport", function() {
     
   } );
   
+  describe( "isConnected", function() {
+    
+    it( "Should be defined", function() {
+      expect( transport.isConnected ).toBeDefined();
+    } );
+    
+    it( "Should return false on startup", function() {
+      expect( transport.isConnected() ).toBeFalsy();
+    } );
+    
+  } );
+  
   describe( "send", function() {
     
     it( "Should be defined", function() {

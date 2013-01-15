@@ -30,11 +30,11 @@ describe( "CM.Session", function() {
       expect( session.connect ).toBeDefined();
     } );
     
-    it( "Should create connection", function() {
-      expect( session.isConnected ).toBeFalsy();
-      session.connect();
-      expect( session.isConnected ).toBeTruthy();
-    } );
+    // it( "Should create connection", function() {
+    //   expect( session.isConnected ).toBeFalsy();
+    //   session.connect();
+    //   expect( session.isConnected ).toBeTruthy();
+    // } );
     
   } );
   

@@ -5,7 +5,10 @@
   CM.Session = new Class({
     
     options: {
-      transport: CM.Transport.WebSocketTransport
+      transport: {
+        klass: CM.Transport.WebSocketTransport,
+        options: {}
+      }
     },
     
     Implements: [ Events, Options ],
@@ -21,11 +24,24 @@
     },
     
     connect: function( callback, errback ) {
-      this._createTransport();
+      if ( CM.isEmpty( this.transport ) ) {
+        this._createTransport();
+      }
+      if ( !this.transport.isConnected() ) {
+        this.transport.connect( function() {
+          // SUCCESS
+          callback.call();
+        }, function() {
+          // ERROR
+          errback.call();
+        } )
+      }
     },
     
     _createTransport: function() {
-      this.transport = new this.options.transport;
+      this.transport = new this.options.transport.klass(
+        this.options.transport.options
+      );
     }
     
   });
