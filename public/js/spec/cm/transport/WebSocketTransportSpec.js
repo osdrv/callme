@@ -1,17 +1,27 @@
 describe( "CM.Transport.WebSocketTransport", function() {
-  
+
+  var TEST_WS_MSG = "{\"object\":{ \
+    \"fieldInt\": 123, \
+    \"fieldFloat\": 1.5, \
+    \"fieldBool\": false, \
+    \"fieldNil\": null, \
+    \"fieldString\": \"hello world!\", \
+    \"fieldArray\": [1,2,3,4,5], \
+    \"fieldObject\": {\"a\": \"b\", \"c\": \"d\"} \
+  }}";
+
   var transportOptions = {
     host: 'testhost',
     port: '12345',
     protocols: [ 'soap', 'xmpp' ],
     url: '/echoServer'
   }
-  
+
   var transport,
       originalWebSocket;
-  
+
   beforeEach( function() {
-    
+
     // WebSocket STUB
     originalWebSocket = window.WebSocket;
     window.WebSocket = new Class({
@@ -31,10 +41,15 @@ describe( "CM.Transport.WebSocketTransport", function() {
         if ( CM.isFunc( this.onclose ) ) {
           this.onclose();
         }
+      },
+      message: function( message ) {
+        if ( CM.isFunc( this.onmessage ) ) {
+          this.onmessage( message );
+        }
       }
     });
     // END OF WebSocket STUB
-    
+
     transport = new CM.Transport.WebSocketTransport(
       transportOptions
     );
@@ -43,22 +58,22 @@ describe( "CM.Transport.WebSocketTransport", function() {
   afterEach( function() {
     window.WebSocket = originalWebSocket;
   } );
-  
+
   describe( "getConnectionUrl", function() {
-      
+
     it( "Should be defined", function() {
       expect( transport.getConnectionUrl ).toBeDefined();
     } );
-    
+
     it( "Should return correct string", function() {
       var url = transport.getConnectionUrl();
       expect( url ).toBe( 'ws://testhost:12345/echoServer' );
     } );
-    
+
   } );
-  
+
   describe( "connect", function() {
-    
+
     it( "Should be defined", function() {
       expect( transport.connect ).toBeDefined();
     } );
@@ -70,9 +85,9 @@ describe( "CM.Transport.WebSocketTransport", function() {
     } );
 
     it( "Should trigger 'connection.open.ok' on connect", function() {
-      
+
       var flag = false;
-      
+
       transport.on( 'connection.open.ok', function() {
         flag = true;
       } );
@@ -92,7 +107,7 @@ describe( "CM.Transport.WebSocketTransport", function() {
       runs( function() {
         expect( flag ).toBeTruthy();
       } );
-      
+
     } );
 
     it( "Should call callback function", function() {
@@ -115,15 +130,15 @@ describe( "CM.Transport.WebSocketTransport", function() {
         expect( flag ).toBeTruthy();
       } );
     } );
-    
+
   } );
-  
+
   describe( "disconnect", function() {
-    
+
     it( "Should be defined", function() {
       expect( transport.disconnect ).toBeDefined();
     } );
-    
+
     it( "Should call socket.close", function() {
       var socket = new WebSocket(),
           flag = false;
@@ -135,7 +150,7 @@ describe( "CM.Transport.WebSocketTransport", function() {
       expect( transport.socket ).toBeNull();
       expect( flag ).toBeTruthy();
     } );
-    
+
     it( "Should fire 'connection.close.ok' event if socket is not null", function() {
       var socket = new WebSocket(),
           flag = false;
@@ -147,7 +162,7 @@ describe( "CM.Transport.WebSocketTransport", function() {
       transport.disconnect();
       expect( flag ).toBeTruthy();
     } );
-    
+
     it( "Should not fire 'connection.close.ok' event if socket is null", function() {
       var flag = false;
       transport.on( 'connection.close.ok', function() {
@@ -156,7 +171,71 @@ describe( "CM.Transport.WebSocketTransport", function() {
       transport.disconnect();
       expect( flag ).toBeFalsy();
     } );
-    
+
   } );
-  
+
+  describe( "message", function() {
+
+    it( "Should trigger 'connection.message' event", function() {
+      var flag = false;
+      transport.on( "connection.message", function( message ) {
+        flag = true;
+      } );
+      runs( function() {
+        transport.connect( function() {
+          transport.socket.message( TEST_WS_MSG );
+        } );
+      } );
+
+      waitsFor( function() {
+        return flag;
+      }, "Should change flag", 50 );
+
+      runs( function() {
+        expect( flag ).toBeTruthy();
+      } );
+    } );
+
+    it( "Should parse JSON message", function() {
+      var parsed_message, flag = false;
+      transport.on( "connection.message", function( message ) {
+        flag = true;
+        parsed_message = message;
+      } );
+      runs( function() {
+        transport.connect( function() {
+          transport.socket.message( TEST_WS_MSG );
+        } );
+      } );
+
+      waitsFor( function() {
+        return flag;
+      }, "Should change flag", 50 );
+
+      runs( function() {
+        expect( typeof( parsed_message ) ).not.toBe( "string" );
+        expect( typeof( parsed_message ) ).toBe( "object" );
+        expect( parsed_message.object ).toBeDefined();
+        expect( parsed_message.object.fieldInt ).toBeDefined();
+        expect( parsed_message.object.fieldInt ).toBe( 123 );
+        expect( parsed_message.object.fieldFloat ).toBeDefined();
+        expect( parsed_message.object.fieldFloat ).toBe( 1.5 );
+        expect( parsed_message.object.fieldBool ).toBeDefined();
+        expect( parsed_message.object.fieldBool ).toBe( false );
+        expect( parsed_message.object.fieldNil ).toBeDefined();
+        expect( parsed_message.object.fieldNil ).toBeNull();
+        expect( parsed_message.object.fieldString ).toBeDefined();
+        expect( parsed_message.object.fieldString ).toBe( 'hello world!' );
+        expect( parsed_message.object.fieldArray ).toBeDefined();
+        expect( parsed_message.object.fieldArray.length ).toBe( 5 );
+        expect( parsed_message.object.fieldObject ).toBeDefined();
+        expect( parsed_message.object.fieldObject.a ).toBeDefined();
+        expect( parsed_message.object.fieldObject.a ).toBe( 'b' );
+        expect( parsed_message.object.fieldObject.c ).toBeDefined();
+        expect( parsed_message.object.fieldObject.c ).toBe( 'd' );
+      } );
+    } );
+
+  } );
+
 } );

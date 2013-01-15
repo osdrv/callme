@@ -1,25 +1,25 @@
 ;( function( W ) {
-  
+
   var CM = W.CM = W.CM || {};
-  
+
   CM.Transport = CM.Transport || {};
-  
+
   CM.Transport.WebSocketTransport = new Class({
-    
+
     Extends: CM.Transport,
-    
+
     options: {
       host: 'localhost',
       port: '8080',
       protocols: [ 'soap', 'xmpp' ],
       url: '/echo'
     },
-    
+
     initialize: function( options ) {
       this.parent( options );
       this.socket = null;
     },
-    
+
     getConnectionUrl: function() {
       return 'ws://' +
         this.options.host +
@@ -27,7 +27,7 @@
         this.options.port +
         this.options.url;
     },
-    
+
     connect: function( callback, errback ) {
       var self = this,
       localCallback = function() {
@@ -54,8 +54,8 @@
             }
             // END OF FIXME
           }
-          self.socket.onmessage = function( message ) {
-            self.bang( 'connection.message', message );
+          self.socket.onmessage = function( string_message ) {
+            self.receive( string_message );
           }
           self.socket.onclose = function() {
             self.is_connected = false;
@@ -73,7 +73,7 @@
         localCallback();
       }
     },
-    
+
     disconnect: function( callback ) {
       if ( !CM.isEmpty( this.socket ) ) {
         try {
@@ -81,14 +81,23 @@
           this.socket.close();
           this.socket = null;
         } catch( e ) {
-          this.bang( 'connection.close.error' );
+          this.bang( 'connection.close.error', e );
         }
       }
       if ( CM.isFunc( callback ) ) {
         callback();
       }
+    },
+
+    receive: function( string_message ) {
+      try {
+        var message = JSON.parse( string_message );
+        this.bang( 'connection.message', message );
+      } catch( e ) {
+        this.bang( 'connection.message.error', e );
+      }
     }
-    
+
   });
-  
+
 } )( window );
