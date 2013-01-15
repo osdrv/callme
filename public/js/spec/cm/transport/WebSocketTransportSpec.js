@@ -1,9 +1,5 @@
 describe( "CM.Transport.WebSocketTransport", function() {
   
-  // WebSocket STUB
-  var WebSocket;
-  // END OF WebSocket STUB
-  
   var transportOptions = {
     host: 'testhost',
     port: '12345',
@@ -11,20 +7,41 @@ describe( "CM.Transport.WebSocketTransport", function() {
     url: '/echoServer'
   }
   
-  var transport;
+  var transport,
+      originalWebSocket;
   
   beforeEach( function() {
     
-    WebSocket = new Class({
-      Implements: [ Events, Options ],
+    // WebSocket STUB
+    originalWebSocket = window.WebSocket;
+    window.WebSocket = new Class({
+      Implements: [ Events ],
       initialize: function( options ) {
-
+        var self = this;
+        window.setTimeout( function() {
+          self.open();
+        }, 10 );
+      },
+      open: function() {
+        if ( CM.isFunc( this.onopen ) ) {
+          this.onopen();
+        }
+      },
+      close: function() {
+        if ( CM.isFunc( this.onclose ) ) {
+          this.onclose();
+        }
       }
     });
+    // END OF WebSocket STUB
     
     transport = new CM.Transport.WebSocketTransport(
       transportOptions
     );
+  } );
+
+  afterEach( function() {
+    window.WebSocket = originalWebSocket;
   } );
   
   describe( "getConnectionUrl", function() {
@@ -44,6 +61,59 @@ describe( "CM.Transport.WebSocketTransport", function() {
     
     it( "Should be defined", function() {
       expect( transport.connect ).toBeDefined();
+    } );
+
+    it( "Should create new socket instance", function() {
+      expect( transport.socket ).toBeNull();
+      transport.connect();
+      expect( transport.socket ).not.toBeNull();
+    } );
+
+    it( "Should trigger 'connection.open.ok' on connect", function() {
+      
+      var flag = false;
+      
+      transport.on( 'connection.open.ok', function() {
+        flag = true;
+      } );
+
+      runs( function() {
+        transport.connect();
+      } );
+
+      waitsFor(
+        function() {
+          return flag
+        },
+        "Flag should be set to true",
+        50
+      );
+
+      runs( function() {
+        expect( flag ).toBeTruthy();
+      } );
+      
+    } );
+
+    it( "Should call callback function", function() {
+      var flag = false;
+      runs( function() {
+        transport.connect( function() {
+          flag = true;
+        } );
+      } );
+
+      waitsFor(
+        function() {
+          return flag
+        },
+        "Flag should be set to true",
+        50
+      );
+
+      runs( function() {
+        expect( flag ).toBeTruthy();
+      } );
     } );
     
   } );
@@ -69,11 +139,11 @@ describe( "CM.Transport.WebSocketTransport", function() {
     it( "Should fire 'connection.close.ok' event if socket is not null", function() {
       var socket = new WebSocket(),
           flag = false;
-      socket.close = function() {};
       transport.on( 'connection.close.ok', function() {
         flag = true;
       } );
-      transport.socket = socket;
+      // transport.socket = socket;
+      transport.connect();
       transport.disconnect();
       expect( flag ).toBeTruthy();
     } );
