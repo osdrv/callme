@@ -16,9 +16,18 @@
     },
 
     bang: function( event ) {
+      var args = CM.argsToArr( arguments ),
+          self = this;
+      args.shift();
       if ( !CM.isEmpty( listeners[ event ] ) ) {
-        listeners[ event ].each( function( listener) {} )
+        listeners[ event ].each( function( handler ) {
+          if ( CM.isFunc( handler ) ) {
+            handler.apply( self, args );
+          }
+        } );
       }
+
+      return this;
     }
     
   };
