@@ -2,14 +2,25 @@
   
   var CM = W.CM = W.CM || {};
   
-  CM.Controller = new Class({
+  var listeners = {};
+
+  CM.Controller = {
     
-    Implements: [ OnEvents, Options ],
-    
-    initialize: function( options ) {
-      this.setOptions( options );
+    on: function( event, handler ) {
+      if ( CM.isEmpty( listeners[ event ] ) ) {
+        listeners[ event ] = [];
+      }
+      listeners[ event ].push( handler );
+
+      return this;
+    },
+
+    bang: function( event ) {
+      if ( !CM.isEmpty( listeners[ event ] ) ) {
+        listeners[ event ].each( function( listener) {} )
+      }
     }
     
-  });
+  };
   
 } )( window );

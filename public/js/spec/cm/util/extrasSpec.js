@@ -102,5 +102,94 @@ describe( "CM.Util.extras", function() {
     } );
     
   } );
+
+  describe( "argsToArr", function() {
+
+    it( "Should be defined", function() {
+      expect( CM.argsToArr ).toBeDefined();
+    } );
+    
+    it( "Should return right value", function() {
+      var arr = [ 1, 2, 3 ],
+          flag = false,
+          res = null,
+          testFunc = function() {
+            flag = true;
+            res = CM.argsToArr( arguments );
+          };
+      testFunc.apply( window, arr );
+      
+      expect( flag ).toBeTruthy();
+      expect( res.join( " " ) ).toBe( arr.join( " " ) );
+    } );
+  } );
   
+  describe( "_w", function() {
+    it( "Should be defined", function() {
+      expect( CM._w ).toBeDefined();
+    } );
+    
+    it( "Should return right value", function() {
+      var arr = [ "a", "b", "c" ],
+          testStr = "a b c",
+          res = CM._w( testStr );
+
+      expect( res instanceof Array ).toBeTruthy;
+      expect( res.length ).toBe( 3 );
+      expect( arr.join( " " ) ).toBe( res.join( " " ) );
+    } );
+  } );
+
+  describe( "getUserMedia", function() {
+    
+    var originalNavigator;
+
+    beforeEach( function() {
+      originalNavigator = window.navigator;
+      window.navigator = {};
+    } );
+
+    afterEach( function() {
+      window.navigator = originalNavigator;
+    } );
+
+    it( "Should be defined", function() {
+      expect( CM.getUserMedia ).toBeDefined();
+    } );
+
+    it( "Should be defined in case of generic method", function() {
+      navigator.getUserMedia = 1;
+      expect( CM.getUserMedia() ).toBe( 1 );
+    } );
+
+    it( "Should be defined in case of webkit method", function() {
+      navigator.webkitGetUserMedia = 1;
+      expect( CM.getUserMedia() ).toBe( 1 );
+    } );
+
+    it( "Should be defined in case of mozilla method", function() {
+      navigator.mozGetUserMedia = 1;
+      expect( CM.getUserMedia() ).toBe( 1 );
+    } );
+
+    it( "Should be defined in case of msie method", function() {
+      navigator.msGetUserMedia = 1;
+      expect( CM.getUserMedia() ).toBe( 1 );
+    } );    
+  } );
+
+  describe( "tmpl", function() {
+
+    it( "Should be defined", function() {
+      expect( CM.tmpl ).toBeDefined();
+    } );
+
+    it( "Should return correct value", function() {
+      var testObj = { "a": "b", "c": "d" },
+          testTmpl = "<div class=\"#{a}\">#{c}-#{c}:#{c}#{cc}</div>",
+          res = CM.tmpl( testTmpl, testObj );
+      expect( res ).toBe( "<div class=\"b\">d-d:d</div>" );
+    } );
+
+  } );
 } );

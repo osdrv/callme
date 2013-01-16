@@ -27,5 +27,31 @@
   CM.isEmpty = function( arg ) {
     return arg === undefined || !arg
   }
+
+  CM.argsToArr = function( args ) {
+    return Array.prototype.slice.call( args );
+  };
+
+  CM._w = function( str ) {
+    return str.split( /\s+/ );
+  }
+
+  CM.getUserMedia = function() {
+    return  navigator.getUserMedia ||
+            navigator.webkitGetUserMedia ||
+            navigator.mozGetUserMedia ||
+            navigator.msGetUserMedia;
+  }
+
+  CM.tmpl = function( str_tmpl, obj ) {
+    res = str_tmpl;
+    Object.each( obj, function( v, k ) {
+      var re = new RegExp( '#{' + k + '}', 'g' );
+      res = res.replace( re, v );
+    } );
+    res = res.replace( /\#\{.+?\}/g, '' );
+    
+    return res;
+  }
   
 } )( window );
