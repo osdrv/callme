@@ -52,11 +52,11 @@ describe( "CM.Transport.WebSocketTransport", function() {
       expect( transport.socket ).not.toBeNull();
     } );
 
-    it( "Should trigger 'connection.open.ok' on connect", function() {
+    it( "Should trigger 'ws.open.ok' on connect", function() {
 
       var flag = false;
 
-      transport.on( 'connection.open.ok', function() {
+      transport.on( 'ws.open.ok', function() {
         flag = true;
       } );
 
@@ -119,10 +119,10 @@ describe( "CM.Transport.WebSocketTransport", function() {
       expect( flag ).toBeTruthy();
     } );
 
-    it( "Should fire 'connection.close.ok' event if socket is not null", function() {
+    it( "Should fire 'ws.close.ok' event if socket is not null", function() {
       var socket = new WebSocket(),
           flag = false;
-      transport.on( 'connection.close.ok', function() {
+      transport.on( 'ws.close.ok', function() {
         flag = true;
       } );
       // transport.socket = socket;
@@ -131,9 +131,9 @@ describe( "CM.Transport.WebSocketTransport", function() {
       expect( flag ).toBeTruthy();
     } );
 
-    it( "Should not fire 'connection.close.ok' event if socket is null", function() {
+    it( "Should not fire 'ws.close.ok' event if socket is null", function() {
       var flag = false;
-      transport.on( 'connection.close.ok', function() {
+      transport.on( 'ws.close.ok', function() {
         flag = true;
       } );
       transport.disconnect();
@@ -144,9 +144,9 @@ describe( "CM.Transport.WebSocketTransport", function() {
 
   describe( "message", function() {
 
-    it( "Should trigger 'connection.message' event", function() {
+    it( "Should trigger 'ws.message' event", function() {
       var flag = false;
-      transport.on( "connection.message", function( message ) {
+      transport.on( "ws.message", function( message ) {
         flag = true;
       } );
       runs( function() {
@@ -166,7 +166,7 @@ describe( "CM.Transport.WebSocketTransport", function() {
 
     it( "Should parse JSON message", function() {
       var parsed_message, flag = false;
-      transport.on( "connection.message", function( message ) {
+      transport.on( "ws.message", function( message ) {
         flag = true;
         parsed_message = message;
       } );

@@ -19,6 +19,11 @@
   } else {
     console.warn( "MooTools Events module is not defied." )
   }
+
+  W.RTCPeerConnection = 
+    W.RTCPeerConnection ||
+      W.mozRTCPeerConnection ||
+        W.webkitRTCPeerConnection;
   
   CM.isFunc = function( arg ) {
     return typeof( arg ) == 'function';

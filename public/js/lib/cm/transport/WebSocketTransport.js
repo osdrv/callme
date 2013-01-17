@@ -30,43 +30,43 @@
 
     connect: function( callback, errback ) {
       var self = this,
-      localCallback = function() {
-        try {
-          self.socket = new WebSocket(
-            self.getConnectionUrl(),
-            self.options.protocols
-          );
-          self.socket.onopen = function() {
-            // FIXME: Arguments list
-            self.bang( 'connection.open.ok', arguments );
-            self.is_connected = true;
-            if ( CM.isFunc( callback ) ) {
-              callback.apply( self, arguments );
+          localCallback = function() {
+            try {
+              self.socket = new WebSocket(
+                self.getConnectionUrl(),
+                self.options.protocols
+              );
+              self.socket.onopen = function() {
+                var args = CM.argsToArr( arguments );
+                args.shift();
+                self.bang( 'ws.open.ok', args );
+                self.is_connected = true;
+                if ( CM.isFunc( callback ) ) {
+                  callback.apply( self, args );
+                }
+              }
+              self.socket.error = function() {
+                var args = CM.argsToArr( arguments );
+                args.shift();
+                self.bang( 'ws.open.error', args );
+                self.is_connected = false;
+                if ( CM.isFunc( errback ) ) {
+                  errback.apply( self, args );
+                }
+              }
+              self.socket.onmessage = function( string_message ) {
+                self.receive( string_message );
+              }
+              self.socket.onclose = function() {
+                self.is_connected = false;
+                self.bang( 'ws.close.ok' );
+              }
+            } catch ( e ) {
+              if ( CM.isFunc( errback ) ) {
+                errback.call( self, e );
+              }
             }
-            // END OF FIXME
-          }
-          self.socket.error = function() {
-            // FIXME: Arguments list
-            self.bang( 'connection.open.error', arguments );
-            self.is_connected = false;
-            if ( CM.isFunc( errback ) ) {
-              errback.apply( self, arguments );
-            }
-            // END OF FIXME
-          }
-          self.socket.onmessage = function( string_message ) {
-            self.receive( string_message );
-          }
-          self.socket.onclose = function() {
-            self.is_connected = false;
-            self.bang( 'connection.close.ok' );
-          }
-        } catch ( e ) {
-          if ( CM.isFunc( errback ) ) {
-            errback.call( self, e );
-          }
-        }
-      };
+          };
       if ( !CM.isEmpty( this.socket ) ) {
         this.disconnect( localCallback );
       } else {
@@ -75,26 +75,26 @@
     },
 
     disconnect: function( callback ) {
-      if ( !CM.isEmpty( this.socket ) ) {
-        try {
+      try {
+        if ( !CM.isEmpty( this.socket ) ) {
           self.is_connected = false;
           this.socket.close();
           this.socket = null;
-        } catch( e ) {
-          this.bang( 'connection.close.error', e );
         }
-      }
-      if ( CM.isFunc( callback ) ) {
-        callback();
+        if ( CM.isFunc( callback ) ) {
+          callback();
+        }
+      } catch( e ) {
+        this.bang( 'ws.close.error', e );
       }
     },
 
     receive: function( string_message ) {
       try {
         var message = JSON.parse( string_message );
-        this.bang( 'connection.message', message );
+        this.bang( 'ws.message', message );
       } catch( e ) {
-        this.bang( 'connection.message.error', e );
+        this.bang( 'ws.message.error', e );
       }
     },
 
