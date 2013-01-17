@@ -40,6 +40,29 @@ describe( "CM.Transport.RTCTransport", function() {
       } );
       
     } );
+
+    it( "Should call errback if no RTCPeerConnection defined", function() {
+      var rtcpc = window.RTCPeerConnection,
+          flag = false;
+      window.RTCPeerConnection = undefined;
+      transport.connect( function() {}, function() {
+        flag = true;
+      });
+      expect( flag ).toBeTruthy();
+      window.RTCPeerConnection = rtcpc;
+    } );
+
+    it( "Should call rtc.error if no RTCPeerConnection defined", function() {
+      var rtcpc = window.RTCPeerConnection,
+          flag = false;
+      window.RTCPeerConnection = undefined;
+      transport.on( 'rtc.error', function() {
+        flag = true;
+      } );
+      transport.connect();
+      expect( flag ).toBeTruthy();
+      window.RTCPeerConnection = rtcpc;
+    } );
   } );
 
 } );

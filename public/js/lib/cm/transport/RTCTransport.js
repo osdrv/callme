@@ -50,7 +50,7 @@
                 self.bang( 'rtc.connection.connecting', arguments );
               }
               pc.onicecandidate = function( event ) {
-                if ( event.candidate ) {
+                if ( !CM.isEmpty( event.candidate ) ) {
                   // IMPLEMENT ME
                   self.bang( 'rtc.connection.icecandidate', arguments );
                   // END OF IMPLEMENT ME
