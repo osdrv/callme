@@ -24,21 +24,40 @@ describe( "CM.Transport.RTCTransport", function() {
       
       transport.on( 'rtc.connection.connecting', function() {
         i += 1;
+        console.log( 'connecting' )
       } ).on( 'rtc.connection.open', function() {
-        i += 1;
+        i += 10;
+        console.log( 'connect' )
       } );
       runs( function() {
         transport.connect();
       } );
 
       waitsFor( function() {
-        return i == 2;
+        return i == 11;
       }, "Should increment counter", 50 );
 
       runs( function() {
-        expect( i ).toBe( 2 );
+        expect( i ).toBe( 11 );
       } );
       
+    } );
+
+    it( "Should call callback on connection success", function() {
+      var i = 0;
+      runs( function() {
+        transport.connect( function() {
+          i += 1;
+        } );
+      } );
+
+      waitsFor( function() {
+        return i == 1;
+      }, "Should increment i", 50 );
+
+      runs( function() {
+        expect( i ).toBe( 1 );
+      } );
     } );
 
     it( "Should call errback if no RTCPeerConnection defined", function() {
@@ -62,6 +81,48 @@ describe( "CM.Transport.RTCTransport", function() {
       transport.connect();
       expect( flag ).toBeTruthy();
       window.RTCPeerConnection = rtcpc;
+    } );
+
+    it( "Should bind onicecandidate", function() {
+      var flag = false;
+      transport.on( "rtc.connection.icecandidate", function() {
+        flag = true;
+      } );
+      runs( function() {
+        transport.connect( function() {
+          transport.peerConnection.icecandidate({});
+        } );
+      } );
+      waitsFor( function() {
+        return flag;
+      }, "Should set flag to true", 50 );
+      runs( function() {
+        expect( flag ).toBeTruthy();
+      } );
+    } );    
+
+    xit( "Should bind onicecandidate, onaddstream and onremovestream", function() {
+      var i = 0;
+      CM._w( "onicecandidate onaddstream onremovestream" ).each( function( event ) {
+        transport.on( "rtc.connection." + event.replace( /^on/, ''), function() {
+          console.log( event )
+          i += 1;
+        } );
+      });
+      runs( function() {
+        transport.connect( function() {
+          transport.peerConnection.icecandidate({});
+          transport.peerConnection.addstream({});
+          transport.peerConnection.removestream();
+        } );
+      } );
+      waitsFor( function() {
+        return i == 3;
+      }, "Should increment counter", 50 );
+      runs( function() {
+        expect( i ).toBe( 3 );
+      } );
+
     } );
   } );
 

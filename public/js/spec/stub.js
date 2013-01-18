@@ -42,14 +42,11 @@ beforeEach( function() {
     initialize: function( options ) {
       var self = this;
       this.setOptions( options );
-      if ( CM.isFunc( this.onconnecting ) ) {
-        this.onconnecting();
-      }
+      window.setTimeout( function() {
+        self.connecting();
+      }, 1 );
       window.setTimeout( function() {
         self.open();
-        if ( CM.isFunc( self.onopen ) ) {
-          self.onopen();
-        }
       }, 10 );
     },
 
