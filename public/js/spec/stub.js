@@ -74,7 +74,7 @@ beforeEach( function() {
       }
     },
 
-    addstream: function( stream ) {
+    addStream: function( stream ) {
       if ( CM.isFunc( this.onaddstream ) ) {
         this.onaddstream();
       }

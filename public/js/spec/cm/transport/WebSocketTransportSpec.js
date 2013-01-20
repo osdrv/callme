@@ -22,6 +22,7 @@ describe( "CM.Transport.WebSocketTransport", function() {
 
   beforeEach( function() {
     transport = new CM.Transport.WebSocketTransport(
+      {},
       transportOptions
     );
   } );

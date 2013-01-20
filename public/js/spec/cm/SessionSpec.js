@@ -72,4 +72,30 @@ describe( "CM.Session", function() {
 
   } );
 
+  describe( "offerTo", function() {
+    
+    var session;
+
+    beforeEach( function() {
+      session = new CM.Session( SSID );
+    } );
+
+    it( "Should be defined", function() {
+      expect( session.offerTo ).toBeDefined();
+    } );
+  } );
+
+  describe( "offerCandidate", function() {
+
+    var session;
+
+    beforeEach( function() {
+      session = new CM.Session( SSID );
+    } );
+    
+    it( "Should be defined", function() {
+      expect( session.offerCandidate ).toBeDefined();
+    } );
+  } );
+
 } );

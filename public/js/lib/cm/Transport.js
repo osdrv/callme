@@ -8,7 +8,8 @@
 
     Implements: [ OnEvents, Options ],
 
-    initialize: function( options ) {
+    initialize: function( session, options ) {
+      this.session = session;
       this.setOptions( options );
       this.is_connected = false;
     },

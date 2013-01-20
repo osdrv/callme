@@ -15,8 +15,8 @@
       url: '/echo'
     },
 
-    initialize: function( options ) {
-      this.parent( options );
+    initialize: function( session, options ) {
+      this.parent( session, options );
       this.socket = null;
     },
 
