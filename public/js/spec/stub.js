@@ -87,11 +87,13 @@ beforeEach( function() {
     },
 
     createOffer: function( callback, errback, options ) {
-
+      callback({
+        sdp: "asd"
+      });
     },
 
     createAnswer: function( callback, errback, options ) {
-
+      callback();
     },
 
     setLocalDescription: function( description ) {

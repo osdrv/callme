@@ -8,7 +8,7 @@
 
     // copypasted from https://apprtc.appspot.com/
     
-    _preferOpus: function( sdp ) {
+    preferOpus: function( sdp ) {
       var sdpLines = sdp.split( '\r\n' );
       // Search for m line.
       for ( var i = 0; i < sdpLines.length; i++ ) {
@@ -22,28 +22,28 @@
       // If Opus is available, set it as the default in m line.
       for ( var i = 0; i < sdpLines.length; i++ ) {
         if ( sdpLines[i].search( 'opus/48000' ) !== -1 ) {
-          var opusPayload = this._extractSdp( sdpLines[ i ], /:(\d+) opus\/48000/i );
+          var opusPayload = this.extractSdp( sdpLines[ i ], /:(\d+) opus\/48000/i );
           if ( opusPayload ) {
-            sdpLines[ mLineIndex ] = this._defaultCodec( sdpLines[ mLineIndex ], opusPayload );
+            sdpLines[ mLineIndex ] = this.defaultCodec( sdpLines[ mLineIndex ], opusPayload );
           }
           break;
         }
       }
 
       // Remove CN in m line and sdp.
-      sdpLines = this._removeCN( sdpLines, mLineIndex );
+      sdpLines = this.removeCN( sdpLines, mLineIndex );
 
       sdp = sdpLines.join( '\r\n' );
 
       return sdp;
     },
     
-    _extractSdp: function( sdpLine, pattern ) {
+    extractSdp: function( sdpLine, pattern ) {
       var result = sdpLine.match( pattern );
       return ( result && result.length == 2 ) ? result[ 1 ]: null;
     },
     
-    _defaultCodec: function( mLine, payload ) {
+    defaultCodec: function( mLine, payload ) {
       var elements = mLine.split( ' ' ),
           newLine = new Array(),
           index = 0;
@@ -58,7 +58,7 @@
       return newLine.join( ' ' );
     },
     
-    _removeCN: function(sdpLines, mLineIndex) {
+    removeCN: function(sdpLines, mLineIndex) {
       var mLineElements = sdpLines[mLineIndex].split(' ');
       // Scan from end for the convenience of removing an item.
       for ( var i = sdpLines.length - 1; i >= 0; i-- ) {

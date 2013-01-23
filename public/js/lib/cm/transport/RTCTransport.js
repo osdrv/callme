@@ -6,9 +6,9 @@
 
   CM.Transport.RTCTransport = new Class({
 
-    Implements: [ CM.Transport.RTCInternals ],
-
     Extends: CM.Transport,
+
+    Implements: [ CM.Transport.RTCInternals ],
 
     options: {
       stun: {
@@ -32,6 +32,9 @@
       this.candidates = [];
       this.setLocalStream( null );
       this.setInited( false );
+
+      console.log( this )
+      
     },
 
     isInited: function() {
@@ -132,6 +135,7 @@
     },
 
     offer: function( callback, errback ) {
+      
       var self = this;
 
       if ( !this.isInited() ) {
@@ -148,15 +152,19 @@
 
       this.peerConnection.addStream( this._locaStream );
       this.peerConnection.createOffer(
-        function ( sess_descr ) {
-          sess_descr.sdp = self._preferOpus( sess_descr.sdp );
-          self.peerConnection.setLocalDescription( sess_descr );
-          callback.call( self, sess_descr );
+        function ( sessDescr ) {
+          // console.log( self )
+          sessDescr.sdp = self.preferOpus( sessDescr.sdp );
+          self.peerConnection.setLocalDescription( sessDescr );
+          callback.call( self, sessDescr );
         },
         null,
         this.options.mediaSettings
       );
-      
+    },
+
+    answer: function( ) {
+
     }
   });
 

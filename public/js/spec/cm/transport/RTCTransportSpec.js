@@ -209,6 +209,26 @@ describe( "CM.Transport.RTCTransport", function() {
 
       expect( flag ).toBeTruthy();
     } );
+
+    it( "Should call callback given", function() {
+      var SSID = "Test session ID",
+          session = new CM.Session( SSID ),
+          transport = new CM.Transport.RTCTransport( session ),
+          flag = false;
+      
+      session.getLocalStream = function() {};
+
+      transport.offer( function() {
+        flag = true;
+      } );
+
+      expect( flag ).toBeTruthy();
+    } );
   } );
 
+  describe( "agree", function() {
+    it( "Should be defined", function() {
+      expect( transport.agree ).toBeDefined();
+    } );
+  } );
 } );

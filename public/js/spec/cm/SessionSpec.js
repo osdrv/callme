@@ -92,9 +92,24 @@ describe( "CM.Session", function() {
     beforeEach( function() {
       session = new CM.Session( SSID );
     } );
-    
+
     it( "Should be defined", function() {
       expect( session.offerCandidate ).toBeDefined();
+    } );
+
+    it( "Should send message via transport", function() {
+      var flag = false,
+          val = null,
+          ssid = null;
+      session.transport.send = function( data ) {
+        flag = true;
+        ssid = data.uuid;
+        val = data.candidate.a;
+      }
+      session.offerCandidate( { a: "b" } );
+      expect( flag ).toBeTruthy();
+      expect( val ).toBe( "b" );
+      expect( ssid ).toBe( SSID );
     } );
   } );
 
