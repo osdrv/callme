@@ -52,6 +52,7 @@
               );
               pc.onopen = function() {
                 var args = CM.argsToArr( arguments );
+                args.shift();
                 self.bang( 'rtc.connection.open', args );
                 if ( CM.isFunc( callback ) ) {
                   callback.apply( self, args );
@@ -72,10 +73,14 @@
                 }
               }
               pc.onaddstream = function( stream ) {
-                self.bang( 'rtc.connection.addstream', arguments );
+                var args = CM.argsToArr( arguments );
+                args.shift();
+                self.bang( 'rtc.connection.addstream', args );
               }
               pc.onremovestream = function() {
-                self.bang( 'rtc.connection.removestream', arguments ); 
+                var args = CM.argsToArr( arguments );
+                args.shift();
+                self.bang( 'rtc.connection.removestream', args ); 
               }
               self.peerConnection = pc;
               self.setInited( true );
@@ -149,7 +154,7 @@
 
       this.peerConnection.addStream( this._localStream );
       this.peerConnection.createOffer(
-        function ( sessDescr ) {
+        function( sessDescr ) {
           sessDescr.sdp = self.preferOpus( sessDescr.sdp );
           self.peerConnection.setLocalDescription( sessDescr );
           if ( CM.isFunc( callback ) ) {
@@ -183,7 +188,7 @@
       this.peerConnection.addStream( this._localStream );
 
       this.peerConnection.createAnswer(
-        function ( sessDescr ) {
+        function( sessDescr ) {
           sessDescr.sdp = self.preferOpus( sessDescr.sdp );
           self.peerConnection.setLocalDescription( sessDescr );
           if ( CM.isFunc( callback ) ) {
@@ -193,6 +198,13 @@
         null,
         this.options.mediaSettings
       );
+    },
+
+    finalizeWith: function( remoteSess ) {
+      this.peerConnection.setRemoteDescription(
+        new RTCSessionDescription( remoteSess )
+      );
+      this.offerCandidates();
     }
 
   });

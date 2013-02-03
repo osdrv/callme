@@ -204,4 +204,18 @@ describe( "CM.Session", function() {
       } );
     } );
   } );
+
+  describe( "accept", function() {
+    var session;
+
+    beforeEach( function() {
+      session = new CM.Session( SSID );
+    } );
+
+    it( "Should be defined", function() {
+      expect( session.accept ).toBeDefined();
+    } );
+
+    
+  } );
 } );

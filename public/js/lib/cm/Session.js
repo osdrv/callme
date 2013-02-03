@@ -128,6 +128,18 @@
       } );
     },
 
+    accept: function( pairedSsid, remoteSession ) {
+      var self = this;
+      this.rtc.answer( remoteSession, function( sessDescr ) {
+        self.transport.send({
+          action: 'accept',
+          uuid: self.ssid,
+          receiver: pairedSsid,
+          session: remoteSession
+        });
+      } );
+    },
+
     reject: function( pairedSsid ) {
       this.transport.send({
         action: 'reject',
@@ -145,12 +157,39 @@
       });
     },
 
+    finalze: function( pairedSsid, remoteSession ) {
+      this.rtc.finalize( remoteSession );
+      this.succeedWith( pairedSsid );
+    },
+
     offerCandidate: function( candidate ) {
       this.transport.send({
         action: 'candidate',
         uuid: this.ssid,
         candidate: candidate
       });
+    },
+
+    succeedWith: function( pairedSsid ) {
+      if ( !CM.isEmpty( this.callbacks[ pairedSsid ] ) ) {
+        if ( CM.isFunc( this.callbacks[ pairedSsid ].callback ) ) {
+          var args = CM.argsToArr( arguments );
+          args.shift();
+          this.callbacks[ pairedSsid ].callback.apply( this, args );
+        }
+        this.callbacks[ pairedSsid ] = null;
+      }
+    },
+
+    failedWith: function( pairedSsid ) {
+      if ( !CM.isEmpty( this.callbacks[ pairedSsid ] ) ) {
+        if ( CM.isFunc( this.callbacks[ pairedSsid ].errback ) ) {
+          var args = CM.argsToArr( arguments );
+          args.shift();
+          this.callbacks[ pairedSsid ].errback.apply( this, args );
+        }
+        this.callbacks[ pairedSsid ] = null;
+      }
     },
     
     _createTransport: function() {
@@ -161,10 +200,19 @@
     },
 
     _createRTC: function() {
+      
+      var self = this;
+
       this.rtc = new this.options.rtc.klass(
         this,
         this.options.rtc.options
       );
+
+      this.rtc.on( 'rtc.connection.addstream', function( event ) {
+        // URL.createObjectURL( event.stream )
+        self.transport.offerCandidates();
+        console.log( stream );
+      } );
     }
     
   });
