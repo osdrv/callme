@@ -1,7 +1,8 @@
 var originalWebSocket,
     originalRTCPeerConnection,
     originalRTCSessionDescription,
-    originalRTCIceCandidate;
+    originalRTCIceCandidate,
+    originalLocalMediaStream;
 
 beforeEach( function() {
   // WebSocket STUB
@@ -88,12 +89,14 @@ beforeEach( function() {
 
     createOffer: function( callback, errback, options ) {
       callback({
-        sdp: "asd"
+        sdp: "asd\nasdasd\nasdasd"
       });
     },
 
     createAnswer: function( callback, errback, options ) {
-      callback();
+      callback({
+        sdp: "asd\nasdasd\nasdasd"
+      });
     },
 
     setLocalDescription: function( description ) {
@@ -119,7 +122,7 @@ beforeEach( function() {
   // END OF RTCSessionDescription STUB
 
   // RTCIceCandidate STUB
-  originalRTCIceCandidate
+  originalRTCIceCandidate = window.RTCIceCandidate;
   window.RTCIceCandidate = new Class({
     Implements: [ Options ],
     initialize: function( options ) {
@@ -130,7 +133,42 @@ beforeEach( function() {
     }
   });
   // END OF RTCIceCandidate STUB
+
+
+  // LocalMediaStream STUB
+  originalLocalMediaStream = window.LocalMediaStream;
+  window.LocalMediaStream = new Class({
+    Implements: [ Options ],
+
+    initialize: function( options ) {
+      this.setOptions( options );
+      this.length = 1;
+      if ( !CM.isEmpty( this.options.video )&&
+        this.options.video ) {
+        this.videoTracks = [];
+      }
+      if ( !CM.isEmpty( this.options.audio )&&
+        this.options.audio ) {
+        this.audioTracks = [];
+      }
+      this.label = "LFcWP25PUaFacWnEuPpxqtE07PjU3u3pqeef";
+      this.readyState = 1;
+    }
+  });
+  // END OF LocalMediaStream STUB
 } );
+
+// Set to false to reject getUserMedia dialog
+var GET_USER_MEDIA_CONFIRM = true;
+navigator.getUserMedia = function( options, callback, errback ) {
+  window.setTimeout( function() {
+    if ( GET_USER_MEDIA_CONFIRM ) {
+      callback.call( self, new LocalMediaStream( options ) );
+    } else {
+      errback.call( self );
+    }
+  }, 10 );
+};
 
 afterEach( function() {
   window.WebSocket = originalWebSocket;

@@ -226,9 +226,21 @@ describe( "CM.Transport.RTCTransport", function() {
     } );
   } );
 
-  describe( "agree", function() {
+  describe( "answer", function() {
     it( "Should be defined", function() {
-      expect( transport.agree ).toBeDefined();
+      expect( transport.answer ).toBeDefined();
+    } );
+
+    it( "Should call callback given", function() {
+      var SSID = "Test session ID",
+          remoteSessionID = "Test session ID#2",
+          session = new CM.Session( SSID ),
+          transport = new CM.Transport.RTCTransport( session ),
+          flag = false;
+      transport.answer( remoteSessionID, function() {
+        flag = true;
+      } );
+      expect( flag ).toBeTruthy();
     } );
   } );
 } );

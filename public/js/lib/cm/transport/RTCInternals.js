@@ -58,7 +58,10 @@
       return newLine.join( ' ' );
     },
     
-    removeCN: function(sdpLines, mLineIndex) {
+    removeCN: function( sdpLines, mLineIndex ) {
+      if ( CM.isEmpty( sdpLines ) || CM.isEmpty( mLineIndex ) ) {
+        return sdpLines;
+      }
       var mLineElements = sdpLines[mLineIndex].split(' ');
       // Scan from end for the convenience of removing an item.
       for ( var i = sdpLines.length - 1; i >= 0; i-- ) {

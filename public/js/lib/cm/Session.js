@@ -12,6 +12,11 @@
       rtc: {
         klass: CM.Transport.RTCTransport,
         options: {}
+      },
+      media: {
+        options: {
+          video: true, audio: true
+        }
       }
     },
     
@@ -27,6 +32,7 @@
       this.callbacks = {};
       this._createTransport();
       this._createRTC();
+      this._localStream = null;
     },
 
     isConnected: function() {
@@ -48,7 +54,45 @@
           if ( CM.isFunc( errback ) ) {
             errback.call();
           }
-        } )
+        } );
+      }
+    },
+
+    getLocalStream: function( callback, errback ) {
+      //getUserMedia
+      if ( !CM.isEmpty( this._localStream ) ) {
+        if ( CM.isFunc( callback ) ) {
+          callback.call( self, this._localStream );
+        }
+      } else {
+        this._initMediaStream( callback, errback );
+      }
+    },
+
+    hangupLocalStream: function( callback ) {
+      this._localStream = null;
+      if ( CM.isFunc( callback ) ) {
+        callback.call( self );
+      }
+    },
+
+    _initMediaStream: function( callback, errback ) {
+      var self = this;
+      try {
+        CM.getUserMedia(
+          this.options.media.options,
+          function( stream ) {
+            self._localStream = stream;
+            if ( CM.isFunc( callback ) ) {
+              callback.call( self, stream );
+            }
+          },
+          errback
+        );
+      } catch ( e ) {
+        if ( CM.isFunc( errback ) ) {
+          errback.call( self, e );
+        }
       }
     },
 
@@ -64,22 +108,18 @@
 
     offerTo: function( pairedSsid, callback, errback ) {
       var self = this;
-      this.callbacks[ ssid ] = {
+      this.callbacks[ pairedSsid ] = {
         callback: callback,
         errback: errback
       };
       this.rtc.offer( function( sessDescr ) {
         // SUCCESSFULLY CREATED OFFER
-        // callback( sess_descr );
         self.transport.send({
           action: 'peer',
           uuid: self.ssid,
           receiver: pairedSsid,
           session: sessDescr
         });
-        if ( CM.isFunc( callback ) ) {
-          callback.call( self );
-        }
       }, function( e ) {
         // OFFER CREATION ERROR
         if ( CM.isFunc( errback ) ) {

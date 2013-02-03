@@ -41,7 +41,7 @@
     return str.split( /\s+/ );
   }
 
-  CM.getUserMedia = function() {
+  CM.getUserMedia = CM.getUserMedia || function() {
     return  navigator.getUserMedia ||
             navigator.webkitGetUserMedia ||
             navigator.mozGetUserMedia ||

@@ -113,4 +113,23 @@ describe( "CM.Session", function() {
     } );
   } );
 
+  describe( "getLocalStream", function() {
+    
+    var session;
+
+    beforeEach( function() {
+      session = new CM.Session( SSID );
+    } );
+
+    it( "Should be defined", function() {
+      expect( session.getLocalStream ).toBeDefined();
+    } );
+
+    it( "Should return local stream instance if user approved getUserMedia dialog", function() {
+      runs( function() {
+        
+      } );
+    } );
+  } );
+
 } );
