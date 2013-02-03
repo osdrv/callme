@@ -132,4 +132,76 @@ describe( "CM.Session", function() {
     } );
   } );
 
+  describe( "reject", function() {
+    var session;
+
+    beforeEach( function() {
+      session = new CM.Session( SSID );
+    } );
+
+    it( "Should be defined", function() {
+      expect( session.reject ).toBeDefined();
+    } );
+
+    it( "Should send reject command", function() {
+      var flag = false,
+          PAIRED_SSID = SSID + "_2",
+          action = null;
+
+      runs( function() {
+        session.connect( function() {
+          session.transport.send = function( message ) {
+            flag = true;
+            action = message.action;
+          }
+          session.reject( PAIRED_SSID );
+        } );
+      } );
+      
+      waitsFor( function() {
+        return flag;
+      }, "Should change flag", 50 );
+
+      runs( function() {
+        expect( flag ).toBeTruthy();
+        expect( action ).toBe( "reject" );
+      } );
+    } );
+  } );
+
+  describe( "hangup", function() {
+    var session;
+
+    beforeEach( function() {
+      session = new CM.Session( SSID );
+    } );
+
+    it( "Should be defined", function() {
+      expect( session.hangup ).toBeDefined();
+    } );
+
+    it( "Should send hangup command", function() {
+      var flag = false,
+          action = null;
+
+      runs( function() {
+        session.connect( function() {
+          session.transport.send = function( message ) {
+            flag = true;
+            action = message.action;
+          }
+          session.hangup();
+        } );
+      } );
+      
+      waitsFor( function() {
+        return flag;
+      }, "Should change flag", 50 );
+
+      runs( function() {
+        expect( flag ).toBeTruthy();
+        expect( action ).toBe( "hangup" );
+      } );
+    } );
+  } );
 } );

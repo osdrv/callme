@@ -128,6 +128,23 @@
       } );
     },
 
+    reject: function( pairedSsid ) {
+      this.transport.send({
+        action: 'reject',
+        uuid: self.ssid,
+        receiver: pairedSsid
+      });
+    },
+
+    hangup: function( reason ) {
+      reason = reason || '';
+      this.transport.send({
+        action: 'hangup',
+        uuid: self.ssid,
+        reason: reason
+      });
+    },
+
     offerCandidate: function( candidate ) {
       this.transport.send({
         action: 'candidate',

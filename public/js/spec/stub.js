@@ -2,7 +2,8 @@ var originalWebSocket,
     originalRTCPeerConnection,
     originalRTCSessionDescription,
     originalRTCIceCandidate,
-    originalLocalMediaStream;
+    originalLocalMediaStream,
+    originalGetUserMedia;
 
 beforeEach( function() {
   // WebSocket STUB
@@ -160,6 +161,7 @@ beforeEach( function() {
 
 // Set to false to reject getUserMedia dialog
 var GET_USER_MEDIA_CONFIRM = true;
+originalGetUserMedia = navigator.getUserMedia;
 navigator.getUserMedia = function( options, callback, errback ) {
   window.setTimeout( function() {
     if ( GET_USER_MEDIA_CONFIRM ) {
@@ -175,4 +177,6 @@ afterEach( function() {
   window.RTCPeerConnection = originalRTCPeerConnection;
   window.RTCSessionDescription = originalRTCSessionDescription;
   window.RTCIceCandidate = originalRTCIceCandidate;
+  window.LocalMediaStream = originalLocalMediaStream;
+  navigator.getUserMedia = originalGetUserMedia;
 } );
