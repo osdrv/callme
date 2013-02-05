@@ -6,13 +6,17 @@
     
     Implements: [ Events, Options ],
     
+    options: {
+      session: {}
+    },
+
     initialize: function( options ) {
       this.setOptions( options );
       this.session = null;
     },
     
     createSession: function( ssid, callback, errback ) {
-      this.session = new CM.Session( ssid );
+      this.session = new CM.Session( ssid, this.options.session );
       this.session.connect( callback, errback );
     },
     

@@ -10,13 +10,20 @@ class SessionAction < Cramp::Action
   on_finish :close_session
   on_data :message_received
   
+  ACTION_PROXY_TABLE = {
+    'peer' => 'invite',
+    'accept' => 'accepted',
+    'reject' => 'rejected',
+    'hangup' => 'hanged_up'
+  }
+
   def close_session
     @@_connections.delete( @session.uuid.to_sym ) rescue nil
     @session.delete
     refresh_contact_list
     @_hooks = nil
   end
-  
+
   def binded_session
     @session
   end
@@ -31,17 +38,15 @@ class SessionAction < Cramp::Action
   end
   
   def register_hooks
-    
     register_hook 'session.confirm' do |message|
-      ssid = message[ 'sender' ]
+      ssid = message[ 'uuid' ]
       Session.find( ssid ) do |session|
-        if !session.nil?
-          @session = session
-          @@_connections[ session.uuid.to_sym ] = self
-          response :action => 'session.confirmed', :receiver => ssid, :user_data => session.user_data
-        else
-          response :action => 'session.rejected', :receiver => ssid
+        if session.nil?
+          session = Session.new( ssid, {} )
         end
+        @session = session
+        @@_connections[ session.uuid.to_sym ] = self
+        response :action => 'session.confirmed', :uuid => ssid, :user_data => session.user_data
       end
     end
     
@@ -61,22 +66,24 @@ class SessionAction < Cramp::Action
   end
   
   def proxy_to( connection, data )
-    data[ 'action' ] = data[ 'data' ].delete( 'action' )
-    data[ 'data' ][ 'sender' ] = Session.find( data[ 'receiver' ] ).to_h
+    data[ 'action' ] = proxy_action( data.delete( 'action' ) )
+    data[ 'sender' ] = @session.uuid
     connection.response( data ) if !connection.nil?
   end
   
+  def proxy_action( action )
+    ACTION_PROXY_TABLE[ action.to_s ]
+  end
+
   def message_received( data )
     message = JSON.parse( data )
-    p message
+    p "message received: #{message}"
     
-    if !message[ 'data' ].nil?
-      call_hooks( message[ 'data' ][ 'action' ], message )
+    if !message[ 'action' ].nil?
+      call_hooks( message[ 'action' ], message )
     end
     
     if !message[ 'receiver' ].nil?
-      p message[ 'receiver' ].to_sym
-      p @@_connections.keys
       proxy_to( @@_connections[ message[ 'receiver' ].to_sym ], message )
     else
       

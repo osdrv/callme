@@ -1,6 +1,6 @@
 describe( "CM.Transport.WebSocketTransport", function() {
 
-  var TEST_WS_MSG = "{\"object\":{ \
+  var TEST_WS_MSG = { data: "{\"object\":{ \
     \"fieldInt\": 123, \
     \"fieldFloat\": 1.5, \
     \"fieldBool\": false, \
@@ -8,7 +8,7 @@ describe( "CM.Transport.WebSocketTransport", function() {
     \"fieldString\": \"hello world!\", \
     \"fieldArray\": [1,2,3,4,5], \
     \"fieldObject\": {\"a\": \"b\", \"c\": \"d\"} \
-  }}",
+  }}" },
   TEST_OBJ = { a: 'b', c: 'd' };
 
   var transportOptions = {

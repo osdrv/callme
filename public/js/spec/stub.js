@@ -31,6 +31,9 @@ beforeEach( function() {
       if ( CM.isFunc( this.onmessage ) ) {
         this.onmessage( message );
       }
+    },
+    send: function( message ) {
+      
     }
   });
   // END OF WebSocket STUB

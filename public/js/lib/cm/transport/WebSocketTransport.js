@@ -91,7 +91,7 @@
 
     receive: function( string_message ) {
       try {
-        var message = JSON.parse( string_message );
+        var message = JSON.parse( string_message.data );
         this.bang( 'ws.message', message );
       } catch( e ) {
         this.bang( 'ws.message.error', e );

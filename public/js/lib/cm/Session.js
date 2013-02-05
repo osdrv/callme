@@ -4,6 +4,8 @@
   
   CM.Session = new Class({
     
+    Implements: [ Events, Options ],
+    
     options: {
       transport: {
         klass: CM.Transport.WebSocketTransport,
@@ -19,8 +21,6 @@
         }
       }
     },
-    
-    Implements: [ Events, Options ],
     
     initialize: function( ssid, options ) {
       options = options || {};
@@ -40,12 +40,14 @@
     },
     
     connect: function( callback, errback ) {
+      var self = this;
       if ( CM.isEmpty( this.transport ) ) {
         this._createTransport();
       }
       if ( !this.transport.isConnected() ) {
         this.transport.connect( function() {
           // SUCCESS
+          self._registerSelf();
           if ( CM.isFunc( callback ) ) {
             callback.call();
           }
@@ -213,6 +215,13 @@
         self.transport.offerCandidates();
         console.log( stream );
       } );
+    },
+
+    _registerSelf: function() {
+      this.transport.send({
+        action: 'session.confirm',
+        uuid: this.ssid
+      })
     }
     
   });

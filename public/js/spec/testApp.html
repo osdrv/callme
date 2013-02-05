@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<head>
+  
+  <meta http-equiv='Content-type' content='text/html; charset=utf-8'>
+  
+  <script type="text/javascript" src="../mt.js"></script>
+  <script type="text/javascript" src="../lib/cm.js"></script>
+  <script type="text/javascript" src="../lib/cm/util/extras.js"></script>
+  <script type="text/javascript" src="../lib/cm/Call.js"></script>
+  <script type="text/javascript" src="../lib/cm/Controller.js"></script>
+  <script type="text/javascript" src="../lib/cm/Transport.js"></script>
+  <script type="text/javascript" src="../lib/cm/transport/WebSocketTransport.js"></script>
+  <script type="text/javascript" src="../lib/cm/transport/RTCInternals.js"></script>
+  <script type="text/javascript" src="../lib/cm/transport/RTCTransport.js"></script>
+  <script type="text/javascript" src="../lib/cm/Session.js"></script>
+  <script type="text/javascript" src="../lib/cm/User.js"></script>
+  <style type="text/css">
+    .selfVideo, .pairedVideo {
+      border: 1px solid lightgrey;
+    }
+  </style>
+</head>
+
+<body>
+  <video class="selfVideo" id="selfVideo" width=240 height=180></video>
+  <video class="pairedVideo" id="pairedVideo" width=320 height=240></video>
+  <ul id="contactList" class="contactList">
+
+  </ul>
+
+  <script type="text/javascript">
+    window.addEvent( "DOMContentLoaded", function() {
+      var user = new CM.User({
+        session: {
+          transport: {
+            options: {
+              url: "/session"
+            }
+          }
+        }
+      });
+      user.createSession( "" + Math.round( Math.random() * 1e15 ), function() {
+        console.log( "session created" );
+      }, function() {
+        console.log( "failed to create session" );
+      } );
+
+      CM.Controller.on( "session.confirmed", function( data ) {
+        console.log( data )
+      } )
+    } );
+  </script>
+</body>
