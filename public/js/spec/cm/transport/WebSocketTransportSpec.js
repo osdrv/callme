@@ -1,14 +1,17 @@
 describe( "CM.Transport.WebSocketTransport", function() {
 
-  var TEST_WS_MSG = { data: "{\"object\":{ \
-    \"fieldInt\": 123, \
-    \"fieldFloat\": 1.5, \
-    \"fieldBool\": false, \
-    \"fieldNil\": null, \
-    \"fieldString\": \"hello world!\", \
-    \"fieldArray\": [1,2,3,4,5], \
-    \"fieldObject\": {\"a\": \"b\", \"c\": \"d\"} \
-  }}" },
+  var TEST_WS_MSG = { data: " \
+    {\"object\":{ \
+      \"fieldInt\": 123, \
+      \"fieldFloat\": 1.5, \
+      \"fieldBool\": false, \
+      \"fieldNil\": null, \
+      \"fieldString\": \"hello world!\", \
+      \"fieldArray\": [1,2,3,4,5], \
+      \"fieldObject\": {\"a\": \"b\", \"c\": \"d\"} \
+    }, \
+    \"action\": \"test.action\" \
+  }" },
   TEST_OBJ = { a: 'b', c: 'd' };
 
   var transportOptions = {

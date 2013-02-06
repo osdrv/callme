@@ -39,15 +39,18 @@
           }
         }
       });
+      
       user.createSession( "" + Math.round( Math.random() * 1e15 ), function() {
+        // OK
         console.log( "session created" );
       }, function() {
+        // FAIL
         console.log( "failed to create session" );
       } );
 
-      CM.Controller.on( "session.confirmed", function( data ) {
-        console.log( data )
-      } )
+      CM.Controller.withRouter( user.getSession().getTransport(), "ws.message" ).on( "session.confirmed", function( data ) {
+        console.log( data );
+      });
     } );
   </script>
 </body>

@@ -48,4 +48,27 @@ describe( "CM.Controller", function() {
 
   } );
 
+  describe( "withRouter", function() {
+    it( "Should be defined", function() {
+      expect( CM.Controller.withRouter ).toBeDefined();
+    } );
+
+    it( "Should throw error if argument is not Transport instance", function() {
+      var notTransportInstance = {},
+          transportInstance = new CM.Transport({});
+      expect( function() { CM.Controller.withRouter( notTransportInstance ) } ).toThrow();
+      expect( function() { CM.Controller.withRouter( transportInstance ) } ).not.toThrow();
+    } );
+
+    it( "Should observe router 'message' event", function() {
+      var transport = new CM.Transport({}),
+          flag = false;
+      CM.Controller.withRouter( transport ).on( "test.event", function() {
+        flag = true;
+      } );
+      transport.bang( "message", { action: 'test.event' } );
+      expect( flag ).toBeTruthy();
+    } );
+  } );
+
 } );

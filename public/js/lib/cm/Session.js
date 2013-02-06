@@ -194,6 +194,10 @@
       }
     },
     
+    getTransport: function() {
+      return this.transport;
+    },
+
     _createTransport: function() {
       this.transport = new this.options.transport.klass(
         this,

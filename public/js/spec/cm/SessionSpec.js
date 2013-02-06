@@ -215,7 +215,5 @@ describe( "CM.Session", function() {
     it( "Should be defined", function() {
       expect( session.accept ).toBeDefined();
     } );
-
-    
   } );
 } );

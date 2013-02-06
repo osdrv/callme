@@ -4,7 +4,7 @@
 
   CM.Transport = new Class({
 
-    /*@Abstract*/
+    /* @Abstract */
 
     Implements: [ OnEvents, Options ],
 
@@ -28,6 +28,7 @@
     },
 
     receive: function( data ) {
+      this.bang( 'message', data );
     }
 
   });
