@@ -46,11 +46,15 @@
       }, function() {
         // FAIL
         console.log( "failed to create session" );
-      } );
-
-      CM.Controller.withRouter( user.getSession().getTransport(), "ws.message" ).on( "session.confirmed", function( data ) {
+      } ).on( "session.confirmed", function( data ) {
         console.log( data );
-      });
+        user.refreshContacts();
+        console.log(123)
+      })
+      .on( "contacts.refresh", function( data ) {
+        console.log( data );
+      } )
+        
     } );
   </script>
 </body>

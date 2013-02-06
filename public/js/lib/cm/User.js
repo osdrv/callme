@@ -4,7 +4,7 @@
   
   CM.User = new Class({
     
-    Implements: [ Events, Options ],
+    Implements: [ OnEvents, Options ],
     
     options: {
       session: {}
@@ -16,8 +16,21 @@
     },
     
     createSession: function( ssid, callback, errback ) {
+      
+      var self = this;
+      
       this.session = new CM.Session( ssid, this.options.session );
       this.session.connect( callback, errback );
+
+      var wsTransport = this.session.getTransport();
+      
+      wsTransport.on( "ws.message", function( message ) {
+        if( !CM.isEmpty( message.action ) ) {
+          self.bang( message.action, message );
+        };
+      } );
+
+      return this;
     },
     
     getSession: function() {
@@ -32,6 +45,10 @@
           callback.call( self );
         }
       } );
+    },
+
+    refreshContacts: function() {
+      this.session.getContactList();
     }
     
   });

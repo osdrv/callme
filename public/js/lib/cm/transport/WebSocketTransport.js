@@ -92,6 +92,7 @@
     receive: function( string_message ) {
       try {
         var message = JSON.parse( string_message.data );
+        console.log( 'Websocket message: ', message );
         this.bang( 'ws.message', message );
       } catch( e ) {
         this.bang( 'ws.message.error', e );

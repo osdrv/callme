@@ -108,6 +108,13 @@
       } );
     },
 
+    getContactList: function() {
+      this.transport.send({
+        action: 'contacts.refresh',
+        uuid: this.ssid
+      });
+    },
+
     offerTo: function( pairedSsid, callback, errback ) {
       var self = this;
       this.callbacks[ pairedSsid ] = {
