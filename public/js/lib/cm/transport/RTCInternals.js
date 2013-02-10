@@ -65,7 +65,7 @@
       var mLineElements = sdpLines[mLineIndex].split(' ');
       // Scan from end for the convenience of removing an item.
       for ( var i = sdpLines.length - 1; i >= 0; i-- ) {
-        var payload = this._extractSdp( sdpLines[i], /a=rtpmap:(\d+) CN\/\d+/i );
+        var payload = this.extractSdp( sdpLines[i], /a=rtpmap:(\d+) CN\/\d+/i );
         if ( payload ) {
           var cnPos = mLineElements.indexOf( payload );
           if ( cnPos !== -1 ) {

@@ -31,7 +31,7 @@ class SessionAction < Cramp::Action
   def refresh_contact_list
     @@_connections.each_pair do |uuid, connection|
       connection.response :action => 'contacts.refresh',
-                          :sessions => @@_connections.values.map( &:binded_session ).reject { |sess|
+                          :contacts => @@_connections.values.map( &:binded_session ).reject { |sess|
         sess.nil? || sess.uuid.to_sym == uuid || sess.private?
       }.map(&:to_h)
     end
@@ -85,8 +85,6 @@ class SessionAction < Cramp::Action
     
     if !message[ 'receiver' ].nil?
       proxy_to( @@_connections[ message[ 'receiver' ].to_sym ], message )
-    else
-      
     end
   end
   

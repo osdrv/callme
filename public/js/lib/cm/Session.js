@@ -49,25 +49,39 @@
           // SUCCESS
           self._registerSelf();
           if ( CM.isFunc( callback ) ) {
-            callback.call();
+            callback.call( self );
           }
         }, function() {
           // ERROR
           if ( CM.isFunc( errback ) ) {
-            errback.call();
+            errback.call( self );
           }
         } );
       }
     },
 
     getLocalStream: function( callback, errback ) {
-      //getUserMedia
       if ( !CM.isEmpty( this._localStream ) ) {
         if ( CM.isFunc( callback ) ) {
           callback.call( self, this._localStream );
         }
       } else {
         this._initMediaStream( callback, errback );
+      }
+    },
+
+    stopLocalStream: function( callback, errback ) {
+      if ( !CM.isEmpty( this._localStream ) ) {
+        try {
+          this._localStream.stop();
+          if ( CM.isFunc( callback ) ) {
+            callback.call( self );
+          }
+        } catch ( e ) {
+          if ( CM.isFunc( errback ) ) {
+            errback.call( self, e );
+          }
+        }
       }
     },
 
@@ -80,8 +94,11 @@
 
     _initMediaStream: function( callback, errback ) {
       var self = this;
-      try {
-        CM.getUserMedia(
+      // try {
+        var getUserMedia = CM.getUserMedia();
+        // We have to call this method with context of navigator
+        // Otherwise Illegal invocation errow would be thrown
+        getUserMedia.call( navigator,
           this.options.media.options,
           function( stream ) {
             self._localStream = stream;
@@ -89,13 +106,18 @@
               callback.call( self, stream );
             }
           },
-          errback
+          function( e ) {
+            console.log( e );
+            if ( CM.isFunc( errback ) ) {
+              errback.call( self );
+            }
+          }
         );
-      } catch ( e ) {
-        if ( CM.isFunc( errback ) ) {
-          errback.call( self, e );
-        }
-      }
+      // } catch ( e ) {
+      //   if ( CM.isFunc( errback ) ) {
+      //     errback.call( self, e );
+      //   }
+      // }
     },
 
     destroy: function( callback ) {

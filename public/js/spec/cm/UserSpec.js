@@ -1,8 +1,9 @@
 describe( "CM.User", function() {
   var userdata = {
-    name: "Test User"
-  },
-  user;
+        name: "Test User"
+      },
+      user,
+      TEST_SSID = "Test session ID";
   
   beforeEach( function() {
     user = new CM.User( { userdata: userdata } );
@@ -36,8 +37,47 @@ describe( "CM.User", function() {
     it( "Should create session instance", function() {
       expect( user.getSession() ).toBeNull();
       expect( function() {
-        user.createSession( "Test session ID" );
+        user.createSession( TEST_SSID );
       } ).not.toThrow();
+    } );
+
+    it( "Should call callback with context of session", function() {
+      var context,
+          flag = false;
+      
+      runs( function() {
+        user.createSession( TEST_SSID, function() {
+          flag = true;
+          context = this;
+        } );
+      } );
+      
+      waitsFor( function() {
+        return flag;
+      }, 50 );
+
+      runs( function() {
+        expect( flag ).toBeTruthy();
+        expect( context instanceof CM.Session ).toBeTruthy();
+      } );
+    } )
+  } );
+
+  describe( "callTo", function() {
+    it( "Should be defined", function() {
+      expect( user.callTo ).toBeDefined();
+    } );
+  } );
+
+  describe( "startWebCam", function() {
+    it( "Should be defined", function() {
+      expect( user.startWebCam ).toBeDefined();
+    } );
+  } );
+
+  describe( "stopWebCam", function() {
+    it( "Should be defined", function() {
+      expect( user.stopWebCam ).toBeDefined();
     } );
   } );
 } );

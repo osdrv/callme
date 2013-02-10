@@ -146,24 +146,20 @@
         }, errback );
       }
 
-      if ( CM.isEmpty( this._localStream ) ) {
-        this.session.getLocalStream( function() {
-          self.offer.call( self, callback, errback );
-        }, errback );
-      }
-
-      this.peerConnection.addStream( this._localStream );
-      this.peerConnection.createOffer(
-        function( sessDescr ) {
-          sessDescr.sdp = self.preferOpus( sessDescr.sdp );
-          self.peerConnection.setLocalDescription( sessDescr );
-          if ( CM.isFunc( callback ) ) {
-            callback.call( self, sessDescr );
-          }
-        },
-        null,
-        this.options.mediaSettings
-      );
+      this.session.getLocalStream( function( stream ) {
+        self.peerConnection.addStream( stream );
+        self.peerConnection.createOffer(
+          function( sessDescr ) {
+            sessDescr.sdp = self.preferOpus( sessDescr.sdp );
+            self.peerConnection.setLocalDescription( sessDescr );
+            if ( CM.isFunc( callback ) ) {
+              callback.call( self, sessDescr );
+            }
+          },
+          null,
+          self.options.mediaSettings
+        );
+      }, errback );
     },
 
     answer: function( remoteSess, callback, errback ) {
@@ -175,29 +171,26 @@
         }, errback );
       }
 
-      if ( CM.isEmpty( this._localStream ) ) {
-        this.session.getLocalStream( function() {
-          self.answer.call( self, remoteSess, callback, errback );
-        }, errback );
-      }
+      this.session.getLocalStream( function( stream ) {
+        
+        self.peerConnection.setRemoteDescription(
+          new RTCSessionDescription( remoteSess )
+        );
 
-      this.peerConnection.setRemoteDescription(
-        new RTCSessionDescription( remoteSess )
-      );
+        self.peerConnection.addStream( stream );
 
-      this.peerConnection.addStream( this._localStream );
-
-      this.peerConnection.createAnswer(
-        function( sessDescr ) {
-          sessDescr.sdp = self.preferOpus( sessDescr.sdp );
-          self.peerConnection.setLocalDescription( sessDescr );
-          if ( CM.isFunc( callback ) ) {
-            callback.call( self, sessDescr );
-          }
-        },
-        null,
-        this.options.mediaSettings
-      );
+        self.peerConnection.createAnswer(
+          function( sessDescr ) {
+            sessDescr.sdp = self.preferOpus( sessDescr.sdp );
+            self.peerConnection.setLocalDescription( sessDescr );
+            if ( CM.isFunc( callback ) ) {
+              callback.call( self, sessDescr );
+            }
+          },
+          null,
+          self.options.mediaSettings
+        );
+      }, errback );
     },
 
     finalizeWith: function( remoteSess ) {

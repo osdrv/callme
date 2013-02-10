@@ -17,18 +17,32 @@
   <style type="text/css">
     .selfVideo, .pairedVideo {
       border: 1px solid lightgrey;
+      display: inline-block;
     }
   </style>
 </head>
 
 <body>
-  <video class="selfVideo" id="selfVideo" width=240 height=180></video>
-  <video class="pairedVideo" id="pairedVideo" width=320 height=240></video>
+  <div class="selfVideo" id="selfVideo" style="width: 240px; height: 180px;"></div>
+  <div class="pairedVideo" id="pairedVideo" style="width: 320px; height:240px;"></div>
   <ul id="contactList" class="contactList">
 
   </ul>
+  
+  <script id="contactTmpl" type="text/callmeTmpl">
+    <li id="#{id}" class="status"><a class="contact" href="##{id}">#{name}</a></li>
+  </script>
+
+  <script id="videoTmpl" type="text/callmeTmpl">
+    <video autoplay="autoplay" src="#{src}" width="#{width}" height="#{height}"></video>
+  </script>
+
 
   <script type="text/javascript">
+
+    var SELF_VIDEO_ATTRIBUTES = { width: 240, height: 180 },
+        PAIRED_VIDEO_ATTRIBUTES = { width: 320, height: 240 };
+
     window.addEvent( "DOMContentLoaded", function() {
       var user = new CM.User({
         session: {
@@ -38,22 +52,58 @@
             }
           }
         }
-      });
-      
-      user.createSession( "" + Math.round( Math.random() * 1e15 ), function() {
-        // OK
-        console.log( "session created" );
-      }, function() {
-        // FAIL
-        console.log( "failed to create session" );
-      } ).on( "session.confirmed", function( data ) {
-        console.log( data );
-        user.refreshContacts();
-        console.log(123)
-      })
-      .on( "contacts.refresh", function( data ) {
-        console.log( data );
-      } )
+      }),
+      contactList = $("contactList");
+
+      CM.testSystem( function() {
+
+        user.createSession( "" + Math.round( Math.random() * 1e15 ), function() {
+          // OK
+          console.log( "session created" );
+        }, function() {
+          // FAIL
+          console.log( "failed to create session" );
+        } ).on( "session.confirmed", function( data ) {
+          console.log( data );
+          user.refreshContacts();
+        } )
+        .on( "contacts.refresh", function( data ) {
+          console.log( data )
+          contactList.empty();
+          var contactsHtml = "";
+          if ( !CM.isEmpty( data.contacts ) ) {
+            data.contacts.each( function( contact ) {
+              contactsHtml += CM.tmpl( "#contactTmpl", {
+                id: contact.uuid,
+                name: CM.isEmpty( contact.user_data.name ) ?
+                        contact.uuid :
+                          CM.isEmpty( contact.user_data.name ),
+                status: "online" /* @FIXME: add more meaningfull statuses */
+              } );
+            } );
+            contactList.set( "html", contactsHtml );
+          }
+        } );
+
+        contactList.addEvent( "click:relay(a.contact)", function( e ) {
+          e.preventDefault();
+          var uuid = this.getParent( "li" ).get( "id" );
+          user.startWebCam( function( videoSrc ) {
+            $("selfVideo").set( "html", CM.tmpl(
+              "#videoTmpl",
+              Object.merge({ src: videoSrc }, SELF_VIDEO_ATTRIBUTES )
+            ) );
+            user.callTo( uuid, function( user2 ) {
+
+            }, function() {
+
+            } );
+          }, function() {
+
+          } );
+        } );
+
+      } );
         
     } );
   </script>

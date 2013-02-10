@@ -49,6 +49,13 @@
   }
 
   CM.tmpl = function( str_tmpl, obj ) {
+    if ( str_tmpl.match( /^#/ ) ) {
+      str_tmpl = str_tmpl.replace( /^#/, "" )
+      var el = $( str_tmpl );
+      if ( !CM.isEmpty( el ) ) {
+        str_tmpl = el.get( 'html' );
+      }
+    }
     res = str_tmpl;
     Object.each( obj, function( v, k ) {
       var re = new RegExp( '#{' + k + '}', 'g' );
@@ -57,6 +64,14 @@
     res = res.replace( /\#\{.+?\}/g, '' );
     
     return res;
+  }
+
+  CM.testSystem = function( callback, errback ) {
+    // @FIXME: implement system test
+    if ( CM.isFunc( callback ) ) {
+      callback();
+    }
+    // END OF FIXME
   }
   
 } )( window );

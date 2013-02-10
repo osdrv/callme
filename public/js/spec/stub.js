@@ -5,6 +5,51 @@ var originalWebSocket,
     originalLocalMediaStream,
     originalGetUserMedia;
 
+var TEST_SDP = "v=0\
+↵o=- 195268782 2 IN IP4 127.0.0.1\
+↵s=-\
+↵t=0 0\
+↵a=group:BUNDLE audio video\
+↵m=audio 1 RTP/SAVPF 111 103 104 0 8 126\
+↵c=IN IP4 0.0.0.0\
+↵a=rtcp:1 IN IP4 0.0.0.0\
+↵a=ice-ufrag:jn/zQ5EGo8SFVsKF\
+↵a=ice-pwd:kX60BruHzMUGUFyR4zxSlOcL\
+↵a=ice-options:google-ice\
+↵a=sendrecv\
+↵a=mid:audio\
+↵a=rtcp-mux\
+↵a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:OYyWgzuAzX7NkwIIfbcJryhoYjHXOedu8mR9M15T\
+↵a=rtpmap:103 ISAC/16000\
+↵a=rtpmap:104 ISAC/32000\
+↵a=rtpmap:111 opus/48000\
+↵a=rtpmap:0 PCMU/8000\
+↵a=rtpmap:8 PCMA/8000\
+↵a=rtpmap:126 telephone-event/8000\
+↵a=ssrc:2548604052 cname:xxTpcv2SXLVKzGnJ\
+↵a=ssrc:2548604052 msid:GFeE8yqAgHuHsdVQoR2Thy7jX4yz555lIATS a0\
+↵a=ssrc:2548604052 mslabel:GFeE8yqAgHuHsdVQoR2Thy7jX4yz555lIATS\
+↵a=ssrc:2548604052 label:GFeE8yqAgHuHsdVQoR2Thy7jX4yz555lIATSa0\
+↵m=video 1 RTP/SAVPF 100 101 102\
+↵c=IN IP4 0.0.0.0\
+↵a=rtcp:1 IN IP4 0.0.0.0\
+↵a=ice-ufrag:jn/zQ5EGo8SFVsKF\
+↵a=ice-pwd:kX60BruHzMUGUFyR4zxSlOcL\
+↵a=ice-options:google-ice\
+↵a=sendrecv\
+↵a=mid:video\
+↵a=rtcp-mux\
+↵a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:OYyWgzuAzX7NkwIIfbcJryhoYjHXOedu8mR9M15T\
+↵a=rtpmap:100 VP8/90000\
+↵a=rtpmap:101 red/90000\
+↵a=rtpmap:102 ulpfec/90000\
+↵a=ssrc:335629684 cname:xxTpcv2SXLVKzGnJ\
+↵a=ssrc:335629684 msid:GFeE8yqAgHuHsdVQoR2Thy7jX4yz555lIATS v0\
+↵a=ssrc:335629684 mslabel:GFeE8yqAgHuHsdVQoR2Thy7jX4yz555lIATS\
+↵a=ssrc:335629684 label:GFeE8yqAgHuHsdVQoR2Thy7jX4yz555lIATSv0\
+↵"
+
+
 beforeEach( function() {
   // WebSocket STUB
   originalWebSocket = window.WebSocket;
@@ -93,13 +138,13 @@ beforeEach( function() {
 
     createOffer: function( callback, errback, options ) {
       callback({
-        sdp: "asd\nasdasd\nasdasd"
+        sdp: TEST_SDP
       });
     },
 
     createAnswer: function( callback, errback, options ) {
       callback({
-        sdp: "asd\nasdasd\nasdasd"
+        sdp: TEST_SDP
       });
     },
 
