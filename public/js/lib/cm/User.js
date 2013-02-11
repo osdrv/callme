@@ -19,8 +19,11 @@
       var self = this;
       Object.each({
         invite: function( action, data ) {
-          
-          return [ action, data ];
+          var call = new CM.Call({ type: 'incomming' });
+          call.uuid( data.uuid );
+          call.rtcSession( data.session );
+          call.userdata( data.userdata );
+          return [ action, call ];
         }
       }, function( h, k ) {
         self._registerProxyHandler( k, h );
@@ -111,6 +114,7 @@
         action = res[ 0 ];
         data = res[ 1 ];
       }
+      console.log( "action: " + action );
       this.bang( action, data );
     }
     

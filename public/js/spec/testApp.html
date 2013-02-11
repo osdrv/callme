@@ -66,8 +66,7 @@
         } ).on( "session.confirmed", function( data ) {
           console.log( data );
           user.refreshContacts();
-        } )
-        .on( "contacts.refresh", function( data ) {
+        } ).on( "contacts.refresh", function( data ) {
           console.log( data )
           contactList.empty();
           var contactsHtml = "";
@@ -83,6 +82,8 @@
             } );
             contactList.set( "html", contactsHtml );
           }
+        } ).on( "invite", function( call ) {
+          console.log( "weeeee!", call )
         } );
 
         contactList.addEvent( "click:relay(a.contact)", function( e ) {
@@ -99,7 +100,7 @@
 
             } );
           }, function() {
-
+            
           } );
         } );
 
