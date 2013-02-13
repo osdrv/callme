@@ -23,7 +23,7 @@
   
   W.URL = W.URL || W.webkitURL;
   
-  W.RTCPeerConnection = W.mozRTCPeerConnection || W.webkitRTCPeerConnection;
+  W.RTCPeerConnection = W.RTCPeerConnection || W.webkitRTCPeerConnection || W.mozRTCPeerConnection;
   
   W.argsToArr = function( args ) {
     return Array.prototype.slice.call( args );

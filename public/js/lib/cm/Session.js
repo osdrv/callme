@@ -233,6 +233,10 @@
       );
     },
 
+    getRTC: function() {
+      return this.rtc;
+    },
+
     _createRTC: function() {
       
       var self = this;

@@ -18,12 +18,19 @@
     _setupProxies: function() {
       var self = this;
       Object.each({
-        invite: function( action, data ) {
+        'invite': function( action, data ) {
           var call = new CM.Call({ type: 'incomming' });
           call.uuid( data.uuid );
           call.rtcSession( data.session );
           call.userdata( data.userdata );
           return [ action, call ];
+        },
+        'remote.video': function( action, data ) {
+          var src;
+          if ( !CM.isEmpty( event.stream ) ) {
+            src = URL.createObjectURL( event.stream );
+          }
+          return [ action, src ];
         }
       }, function( h, k ) {
         self._registerProxyHandler( k, h );
@@ -39,13 +46,19 @@
       this.session = new CM.Session( ssid, this.options.session );
       this.session.connect( callback, errback );
 
-      var wsTransport = this.session.getTransport();
+      var wsTransport = this.getSession().getTransport();
       
-      wsTransport.on( "ws.message", function( message ) {
+      wsTransport.on( 'ws.message', function( message ) {
         if( !CM.isEmpty( message.action ) ) {
           self._proxyEvent( message.action, message );
         };
       } );
+
+      var rtcTransport = this.getSession().getRTC();
+
+      rtcTransport.on( 'rtc.connection.addstream', function( e ) {
+        self._proxyEvent( 'remote.video', event );
+      } )      
 
       return this;
     },

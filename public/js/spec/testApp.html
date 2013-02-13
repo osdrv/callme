@@ -97,6 +97,11 @@
           } else {
             user.reject( call );
           }
+        } ).on( "remote.video", function( remoteVideoSrc ) {
+          console.log( $("pairedVideo").set( "html", CM.tmpl(
+            "#videoTmpl",
+            Object.merge({ src: remoteVideoSrc }, PAIRED_VIDEO_ATTRIBUTES )
+          ) ) );
         } );
 
         contactList.addEvent( "click:relay(a.contact)", function( e ) {

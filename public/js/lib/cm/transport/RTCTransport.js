@@ -51,6 +51,9 @@
                 self.options.stun
               );
               self._opened = false;
+              pc.onstatechange = function() {
+                console.log( "state change", arguments )
+              }
               pc.onopen = function() {
                 if ( !self._opened ) {
                   self._opened = true;
@@ -67,6 +70,7 @@
               pc.onconnecting = function() {
                 self.bang( 'rtc.connection.connecting', arguments );
               }
+              console.log( pc )
               pc.onicecandidate = function( event ) {
                 if ( !CM.isEmpty( event.candidate ) ) {
                   self.scheduleOfferCandidate( {
@@ -88,6 +92,7 @@
               }
               self.peerConnection = pc;
               self.setInited( true );
+              callback.call( self );
             } catch ( e ) {
               self.bang( 'rtc.error' );
               self.setInited( false );
@@ -146,7 +151,7 @@
           self.offer.call( self, callback, errback );
         }, errback );
       }
-
+      console.log('asd');
       this.session.getLocalStream( function( stream ) {
         self.peerConnection.addStream( stream );
         self.peerConnection.createOffer(
