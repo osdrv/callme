@@ -83,7 +83,20 @@
             contactList.set( "html", contactsHtml );
           }
         } ).on( "invite", function( call ) {
-          console.log( "weeeee!", call )
+          var username = ( call.userdata() && call.userdata().name ) || call.uuid();
+          if ( confirm( username + " is calling you. Answer?" ) ) {
+            user.startWebCam( function( videoSrc ) {
+              $("selfVideo").set( "html", CM.tmpl(
+                "#videoTmpl",
+                Object.merge({ src: videoSrc }, SELF_VIDEO_ATTRIBUTES )
+              ) );
+              user.answer( call );
+            }, function() {
+              alert( "Error: webcam couldn't be started." );
+            } );
+          } else {
+            user.reject( call );
+          }
         } );
 
         contactList.addEvent( "click:relay(a.contact)", function( e ) {
@@ -95,12 +108,12 @@
               Object.merge({ src: videoSrc }, SELF_VIDEO_ATTRIBUTES )
             ) );
             user.callTo( uuid, function( user2 ) {
-
+              // succeed
             }, function() {
-
+              alert( "Remote user rejected your call" );
             } );
           }, function() {
-            
+            alert( "Error: webcam couldn't be started." );
           } );
         } );
 

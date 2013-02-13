@@ -94,7 +94,7 @@
 
     _initMediaStream: function( callback, errback ) {
       var self = this;
-      // try {
+      try {
         var getUserMedia = CM.getUserMedia();
         // We have to call this method with context of navigator
         // Otherwise Illegal invocation errow would be thrown
@@ -107,17 +107,16 @@
             }
           },
           function( e ) {
-            console.log( e );
             if ( CM.isFunc( errback ) ) {
               errback.call( self );
             }
           }
         );
-      // } catch ( e ) {
-      //   if ( CM.isFunc( errback ) ) {
-      //     errback.call( self, e );
-      //   }
-      // }
+      } catch ( e ) {
+        if ( CM.isFunc( errback ) ) {
+          errback.call( self, e );
+        }
+      }
     },
 
     destroy: function( callback ) {
@@ -245,8 +244,9 @@
 
       this.rtc.on( 'rtc.connection.addstream', function( event ) {
         // URL.createObjectURL( event.stream )
-        self.transport.offerCandidates();
-        console.log( stream );
+        console.log( event )
+        self.rtc.offerCandidates();
+        console.log( URL.createObjectURL( event.stream ) );
       } );
     },
 

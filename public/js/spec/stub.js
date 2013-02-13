@@ -205,20 +205,26 @@ beforeEach( function() {
     }
   });
   // END OF LocalMediaStream STUB
-} );
 
-// Set to false to reject getUserMedia dialog
-var GET_USER_MEDIA_CONFIRM = true;
-originalGetUserMedia = navigator.getUserMedia;
-navigator.getUserMedia = function( options, callback, errback ) {
-  window.setTimeout( function() {
-    if ( GET_USER_MEDIA_CONFIRM ) {
-      callback.call( self, new LocalMediaStream( options ) );
-    } else {
-      errback.call( self );
-    }
-  }, 10 );
-};
+
+  // Set to false to reject getUserMedia dialog
+  var GET_USER_MEDIA_CONFIRM = true;
+  originalGetUserMedia = CM.getUserMedia;
+  navigator.getUserMedia = function( options, callback, errback ) {
+    window.setTimeout( function() {
+      if ( GET_USER_MEDIA_CONFIRM ) {
+        if ( CM.isFunc( callback ) ) {
+          callback.call( self, new LocalMediaStream( options ) );
+        }
+      } else {
+        if ( CM.isFunc( errback ) ) {
+          errback.call( self );
+        }
+      }
+    }, 10 );
+  };
+
+} );
 
 afterEach( function() {
   window.WebSocket = originalWebSocket;

@@ -50,7 +50,13 @@
               var pc = new RTCPeerConnection(
                 self.options.stun
               );
+              self._opened = false;
               pc.onopen = function() {
+                if ( !self._opened ) {
+                  self._opened = true;
+                } else {
+                  return;
+                }
                 var args = CM.argsToArr( arguments );
                 args.shift();
                 self.bang( 'rtc.connection.open', args );
@@ -72,10 +78,8 @@
                   self.bang( 'rtc.connection.icecandidate', event );
                 }
               }
-              pc.onaddstream = function( stream ) {
-                var args = CM.argsToArr( arguments );
-                args.shift();
-                self.bang( 'rtc.connection.addstream', args );
+              pc.onaddstream = function( event ) {
+                self.bang( 'rtc.connection.addstream', event );
               }
               pc.onremovestream = function() {
                 var args = CM.argsToArr( arguments );
@@ -125,10 +129,8 @@
     },
 
     offerCandidates: function() {
-      var self = this;
       while( this.candidates.length ) {
-        candidate = this.candidates.shift();
-        this.session.offerCandidate( candidate );
+        this.session.offerCandidate( this.candidates.shift() );
       }
     },
 
@@ -137,11 +139,10 @@
     },
 
     offer: function( callback, errback ) {
-      
       var self = this;
-
+      
       if ( !this.isInited() ) {
-        this.connect( function() {
+        return this.connect( function() {
           self.offer.call( self, callback, errback );
         }, errback );
       }
@@ -166,7 +167,7 @@
       var self = this;
 
       if ( !this.isInited() ) {
-        this.connect( function() {
+        return this.connect( function() {
           self.answer.call( self, remoteSess, callback, errback );
         }, errback );
       }

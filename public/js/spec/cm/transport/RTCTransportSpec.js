@@ -204,10 +204,19 @@ describe( "CM.Transport.RTCTransport", function() {
       session.getLocalStream = function() {
         flag = true;
       }
+      
+      runs( function() {
+        transport.offer();
+      } );
 
-      transport.offer();
-
-      expect( flag ).toBeTruthy();
+      waitsFor( function() {
+        return flag;
+      }, 50 );
+      
+      runs( function() {
+        expect( flag ).toBeTruthy();
+      } );
+      
     } );
 
     it( "Should call callback given", function() {
@@ -216,17 +225,29 @@ describe( "CM.Transport.RTCTransport", function() {
           transport = new CM.Transport.RTCTransport( session ),
           flag = false;
       
-      session.getLocalStream = function() {};
+      session.getLocalStream = function( cb ) {
+        cb.call( this );
+      };
 
-      transport.offer( function() {
-        flag = true;
+      runs( function() {
+        transport.offer( function() {
+          flag = true;
+        } );
       } );
-
-      expect( flag ).toBeTruthy();
+      
+      waitsFor( function() {
+        return flag;
+      }, 50 );
+      
+      runs( function() {
+        expect( flag ).toBeTruthy();
+      } );
+      
     } );
   } );
 
   describe( "answer", function() {
+    
     it( "Should be defined", function() {
       expect( transport.answer ).toBeDefined();
     } );
@@ -237,10 +258,21 @@ describe( "CM.Transport.RTCTransport", function() {
           session = new CM.Session( SSID ),
           transport = new CM.Transport.RTCTransport( session ),
           flag = false;
-      transport.answer( remoteSessionID, function() {
-        flag = true;
+      
+      runs( function() {
+        transport.answer( remoteSessionID, function() {
+          flag = true;
+        } );
       } );
-      expect( flag ).toBeTruthy();
+
+      waitsFor( function() {
+        return flag;
+      }, 50 );
+
+      runs( function() {
+        expect( flag ).toBeTruthy();
+      } );
+      
     } );
   } );
 } );

@@ -68,13 +68,10 @@
       this.session.getContactList();
     },
 
-    callTo: function( user, callback, errback ) {
-      if ( user instanceof CM.User ) {
-        user = user.getSession().ssid;
-      }
+    callTo: function( uuid, callback, errback ) {
       var self = this,
       handler = function() {
-        self.getSession().offerTo( user, callback, errback );
+        self.getSession().offerTo( uuid, callback, errback );
       }
       if ( !this.getSession().isConnected() ) {
         this.getSession().connect( function() {
@@ -84,6 +81,16 @@
       } else {
         handler();
       }
+    },
+
+    answer: function( call ) {
+      this.getSession().accept( call.uuid(), call.rtcSession() );
+    },
+
+    reject: function( call ) {
+      this.getSession().reject( call.uuid() );
+      // if ( this.getRoom().anyone() )
+      this.stopWebCam();
     },
 
     startWebCam: function( callback, errback ) {
@@ -114,7 +121,6 @@
         action = res[ 0 ];
         data = res[ 1 ];
       }
-      console.log( "action: " + action );
       this.bang( action, data );
     }
     
