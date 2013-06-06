@@ -13,3 +13,5 @@ gem "haml", "~> 3.1.7"
 gem "em-hiredis", "~> 0.1.1"
 
 gem "uuid", "~> 2.3.6"
+
+gem 'json'
